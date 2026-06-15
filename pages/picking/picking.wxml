@@ -1,0 +1,226 @@
+<view class="pickup-page">
+  <view class="top-notice">
+    <image class="notice-icon" src="/assets/icons/home-pickup.png" mode="aspectFit"></image>
+    <text class="notice-text">提交后客服会确认库存、价格和自提时间</text>
+    <view class="notice-link" bindtap="goPickupLocation">查看说明 <text class="notice-arrow">›</text></view>
+  </view>
+
+  <view wx:if="{{submitBlocked}}" class="blocked-notice">
+    <text>{{salesStatus.label}}：{{salesStatus.description}}</text>
+  </view>
+
+  <view class="content-wrap">
+    <view class="form-section contact-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-service.png" mode="aspectFit"></image>
+        <text>你的联系信息</text>
+      </view>
+      <view class="compact-field">
+        <text class="compact-label">手机号</text>
+        <input class="compact-input" type="number" maxlength="11" value="{{form.buyerPhone}}" data-field="buyerPhone" bindinput="handleInput" placeholder="请输入手机号" />
+      </view>
+      <view class="compact-field">
+        <text class="compact-label">微信号/微信昵称</text>
+        <input class="compact-input" value="{{form.buyerWechat}}" data-field="buyerWechat" bindinput="handleInput" placeholder="请输入微信号或昵称" />
+      </view>
+    </view>
+
+    <view class="form-section purchase-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-pickup.png" mode="aspectFit"></image>
+        <text>选购方式</text>
+      </view>
+
+      <view class="reference-price">
+        <view class="reference-price-head">
+          <text>当前参考单价</text>
+          <text>价格来自商品设置</text>
+        </view>
+        <view class="reference-price-grid">
+          <view class="reference-price-item">
+            <view class="price-variety">
+              <image src="/assets/images/products/guiwei-5.jpg" mode="aspectFill"></image>
+              <text>桂味</text>
+            </view>
+            <view class="price-value">¥{{guiweiUnitPriceText}}<text>/斤</text></view>
+          </view>
+          <view class="reference-price-item">
+            <view class="price-variety">
+              <image src="/assets/images/products/nuomici-5.jpg" mode="aspectFill"></image>
+              <text>糯米糍</text>
+            </view>
+            <view class="price-value">¥{{nuomiciUnitPriceText}}<text>/斤</text></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="segment-control">
+        <view class="segment-item {{form.purchaseMode == '单品购买' ? 'active' : ''}}" data-mode="单品购买" bindtap="selectPurchaseMode">单品购买</view>
+        <view class="segment-item {{form.purchaseMode == '混装购买' ? 'active' : ''}}" data-mode="混装购买" bindtap="selectPurchaseMode">
+          混装购买
+          <text wx:if="{{form.purchaseMode == '混装购买'}}" class="selected-check">✓</text>
+        </view>
+      </view>
+
+      <block wx:if="{{form.purchaseMode == '单品购买'}}">
+        <view class="variety-switch">
+          <view class="variety-option {{form.singleVariety == '桂味' ? 'active' : ''}}" data-variety="桂味" bindtap="selectSingleVariety">
+            <image src="/assets/images/products/guiwei-5.jpg" mode="aspectFill"></image>
+            <view class="variety-copy">
+              <text>桂味</text>
+              <text>¥{{guiweiUnitPriceText}}/斤</text>
+            </view>
+          </view>
+          <view class="variety-option {{form.singleVariety == '糯米糍' ? 'active' : ''}}" data-variety="糯米糍" bindtap="selectSingleVariety">
+            <image src="/assets/images/products/nuomici-5.jpg" mode="aspectFill"></image>
+            <view class="variety-copy">
+              <text>糯米糍</text>
+              <text>¥{{nuomiciUnitPriceText}}/斤</text>
+            </view>
+          </view>
+        </view>
+        <view class="weight-column single-column">
+          <view class="weight-title">
+            <image src="{{form.singleVariety == '桂味' ? '/assets/images/products/guiwei-5.jpg' : '/assets/images/products/nuomici-5.jpg'}}" mode="aspectFill"></image>
+            <text>{{form.singleVariety}}斤数</text>
+            <text class="weight-help">支持一位小数</text>
+          </view>
+          <view class="weight-input-wrap">
+            <input class="weight-input" type="digit" value="{{form.singleWeight}}" data-field="singleWeight" bindinput="handleInput" placeholder="例如 0.5、3.8 或 12" />
+            <text class="weight-unit">斤</text>
+          </view>
+          <view class="quick-weight-row">
+            <view wx:for="{{quickWeightOptions}}" wx:key="*this" class="quick-weight-button {{form.singleWeight == item ? 'active' : ''}}" data-field="singleWeight" data-weight="{{item}}" bindtap="fillQuickWeight">{{item}}斤</view>
+          </view>
+        </view>
+      </block>
+
+      <view wx:else class="mixed-weight-grid">
+        <view class="weight-column">
+          <view class="weight-title">
+            <image src="/assets/images/products/guiwei-5.jpg" mode="aspectFill"></image>
+            <text>桂味斤数</text>
+            <text class="weight-price">¥{{guiweiUnitPriceText}}/斤</text>
+          </view>
+          <view class="weight-input-wrap">
+            <input class="weight-input" type="digit" value="{{form.guiweiWeight}}" data-field="guiweiWeight" bindinput="handleInput" placeholder="可自由填写" />
+            <text class="weight-unit">斤</text>
+          </view>
+          <view class="quick-weight-row">
+            <view wx:for="{{quickWeightOptions}}" wx:key="*this" class="quick-weight-button {{form.guiweiWeight == item ? 'active' : ''}}" data-field="guiweiWeight" data-weight="{{item}}" bindtap="fillQuickWeight">{{item}}斤</view>
+          </view>
+        </view>
+        <view class="weight-column">
+          <view class="weight-title">
+            <image src="/assets/images/products/nuomici-5.jpg" mode="aspectFill"></image>
+            <text>糯米糍斤数</text>
+            <text class="weight-price">¥{{nuomiciUnitPriceText}}/斤</text>
+          </view>
+          <view class="weight-input-wrap">
+            <input class="weight-input" type="digit" value="{{form.nuomiciWeight}}" data-field="nuomiciWeight" bindinput="handleInput" placeholder="可自由填写" />
+            <text class="weight-unit">斤</text>
+          </view>
+          <view class="quick-weight-row">
+            <view wx:for="{{quickWeightOptions}}" wx:key="*this" class="quick-weight-button {{form.nuomiciWeight == item ? 'active' : ''}}" data-field="nuomiciWeight" data-weight="{{item}}" bindtap="fillQuickWeight">{{item}}斤</view>
+          </view>
+        </view>
+      </view>
+      <view class="free-weight-note">快捷斤数仅用于快速填入，点击后仍可手动修改。</view>
+    </view>
+
+    <view class="form-section gift-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-pickup.png" mode="aspectFit"></image>
+        <text>礼盒与备注</text>
+      </view>
+      <view class="segment-control gift-control">
+        <view class="segment-item {{form.needGiftBox == '否' ? 'active' : ''}}" data-value="否" bindtap="selectGiftBox">
+          不需要礼盒
+          <text wx:if="{{form.needGiftBox == '否'}}" class="selected-check">✓</text>
+        </view>
+        <view class="segment-item {{form.needGiftBox == '是' ? 'active' : ''}}" data-value="是" bindtap="selectGiftBox">
+          需要礼盒
+          <text wx:if="{{form.needGiftBox == '是'}}" class="selected-check">✓</text>
+        </view>
+      </view>
+      <view wx:if="{{form.needGiftBox == '是'}}" class="gift-count-grid">
+        <view>
+          <text class="gift-count-label">5斤礼盒数量 · ¥{{giftBox5UnitPriceText}}/个</text>
+          <input class="gift-count-input" type="number" value="{{form.giftBox5Count}}" data-field="giftBox5Count" bindinput="handleInput" placeholder="0" />
+        </view>
+        <view>
+          <text class="gift-count-label">10斤礼盒数量 · ¥{{giftBox10UnitPriceText}}/个</text>
+          <input class="gift-count-input" type="number" value="{{form.giftBox10Count}}" data-field="giftBox10Count" bindinput="handleInput" placeholder="0" />
+        </view>
+      </view>
+      <view class="remark-title">备注（选填）</view>
+      <textarea class="remark-input" maxlength="100" value="{{form.note}}" data-field="note" bindinput="handleInput" placeholder="例如自提时间、送礼要求、其他说明"></textarea>
+      <text class="remark-count">{{form.note.length || 0}}/100</text>
+    </view>
+
+    <view class="form-section pickup-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-nearby.png" mode="aspectFit"></image>
+        <text>自提安排</text>
+      </view>
+      <view class="pickup-address">{{pickupAddressText}}</view>
+      <view class="pickup-picker-grid">
+        <picker mode="date" value="{{form.pickupDate}}" bindchange="handleDateChange">
+          <view class="pickup-picker">
+            <text class="picker-label">期望日期</text>
+            <text class="picker-value">{{pickupDateText}}</text>
+          </view>
+        </picker>
+        <picker mode="selector" range="{{pickupTimeSlots}}" value="{{pickupTimeSlotIndex}}" data-field="pickupTimeSlot" bindchange="handlePicker">
+          <view class="pickup-picker">
+            <text class="picker-label">时间段</text>
+            <text class="picker-value">{{form.pickupTimeSlot}}</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-section preview-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-delivery.png" mode="aspectFit"></image>
+        <text>订单预览</text>
+      </view>
+      <view wx:if="{{guiweiAmount > 0}}" class="price-detail-row">
+        <view class="price-detail-copy">
+          <text class="price-detail-name">桂味</text>
+          <text class="price-detail-formula">{{guiweiWeightText}}斤 × ¥{{guiweiUnitPriceText}}/斤</text>
+        </view>
+        <text class="price-detail-amount">¥{{guiweiAmountMoneyText}}</text>
+      </view>
+      <view wx:if="{{nuomiciAmount > 0}}" class="price-detail-row">
+        <view class="price-detail-copy">
+          <text class="price-detail-name">糯米糍</text>
+          <text class="price-detail-formula">{{nuomiciWeightText}}斤 × ¥{{nuomiciUnitPriceText}}/斤</text>
+        </view>
+        <text class="price-detail-amount">¥{{nuomiciAmountMoneyText}}</text>
+      </view>
+      <view wx:if="{{guiweiAmount == 0 && nuomiciAmount == 0}}" class="preview-empty">
+        填写购买斤数后，这里会显示价格明细
+      </view>
+      <view class="preview-line preview-fee">
+        <text>礼盒费用</text>
+        <text>¥{{giftBoxFeeMoneyText}}</text>
+      </view>
+      <view class="preview-line total-weight"><text>总斤数</text><text>{{totalWeightText}}</text></view>
+      <view class="preview-amount">
+        <text>预计金额</text>
+        <text>¥{{estimatedAmountMoneyText}}</text>
+      </view>
+      <view class="preview-tip">预计金额按当前参考单价计算，最终以客服确认库存和当日价格为准。</view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+  <view class="checkout-bar">
+    <view class="checkout-amount">
+      <text>预计金额</text>
+      <text>¥{{estimatedAmountMoneyText}}</text>
+    </view>
+    <button class="checkout-button" disabled="{{submitBlocked}}" bindtap="submitForm">{{submitButtonText}}</button>
+  </view>
+</view>

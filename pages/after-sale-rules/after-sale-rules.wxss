@@ -1,0 +1,12 @@
+page { background: #f8f3e9; }
+.rules-page { padding-bottom: 90rpx; }
+.hero-card, .rule-card { margin-bottom: 18rpx; padding: 28rpx; border: 1rpx solid rgba(79,125,70,.11); border-radius: 20rpx; background: #fffdf7; box-shadow: 0 10rpx 26rpx rgba(74,91,58,.05); }
+.hero-card { background: linear-gradient(135deg,#eaf4e3,#fffdf7); }
+.hero-title { color: #25331e; font-size: 38rpx; font-weight: 800; }
+.hero-desc, .rule-copy { margin-top: 12rpx; color: #65705f; font-size: 24rpx; line-height: 1.7; }
+.rule-title { color: #25331e; font-size: 29rpx; font-weight: 800; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 10rpx; margin-top: 16rpx; }
+.tag { padding: 8rpx 15rpx; border-radius: 999rpx; color: #3f7335; background: #edf6e7; font-size: 22rpx; }
+.mode-note { padding: 22rpx; border-radius: 16rpx; color: #766748; background: #fff3d8; font-size: 22rpx; line-height: 1.6; }
+.contact-btn { height: 82rpx; margin-top: 24rpx; border-radius: 999rpx; color: #fff; background: #4f7d46; font-size: 27rpx; font-weight: 800; line-height: 82rpx; }
+.contact-btn::after { border: 0; }

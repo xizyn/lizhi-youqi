@@ -1,0 +1,276 @@
+page {
+  background: #f7f4ec;
+  color: #26351f;
+}
+
+.location-page {
+  min-height: 100vh;
+  padding: 28rpx 24rpx 64rpx;
+  box-sizing: border-box;
+}
+
+.location-hero,
+.map-card,
+.action-card,
+.arrival-tip {
+  border: 1rpx solid rgba(67, 96, 47, 0.1);
+  border-radius: 20rpx;
+  background: #fff;
+  box-shadow: 0 10rpx 26rpx rgba(43, 70, 31, 0.07);
+}
+
+.location-hero {
+  padding: 34rpx 30rpx;
+  background: #eef5e8;
+}
+
+.hero-kicker {
+  color: #6c865d;
+  font-size: 22rpx;
+}
+
+.hero-title {
+  margin-top: 8rpx;
+  color: #234b29;
+  font-size: 42rpx;
+  font-weight: 700;
+}
+
+.address-row {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 22rpx;
+  color: #24321f;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.address-pin {
+  flex: 0 0 auto;
+  width: 14rpx;
+  height: 14rpx;
+  margin: 14rpx 16rpx 0 0;
+  border: 5rpx solid #5a8349;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.hero-note {
+  margin-top: 18rpx;
+  color: #687062;
+  font-size: 24rpx;
+  line-height: 1.65;
+}
+
+.map-card {
+  margin-top: 24rpx;
+  padding: 22rpx;
+}
+
+.map-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12rpx;
+}
+
+.map-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72rpx;
+  border: 1rpx solid #dfe5d9;
+  border-radius: 12rpx;
+  color: #697066;
+  background: #fafbf8;
+  font-size: 25rpx;
+  font-weight: 600;
+}
+
+.map-tab.active {
+  border-color: #4d7b3d;
+  color: #285b32;
+  background: #eaf4e4;
+}
+
+.map-swiper {
+  height: 700rpx;
+  margin-top: 20rpx;
+  overflow: hidden;
+  border-radius: 16rpx;
+  background: #edf3e9;
+}
+
+.map-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.map-image {
+  display: block;
+  width: 100%;
+  min-height: 100%;
+}
+
+.map-marker {
+  position: absolute;
+  z-index: 3;
+  max-width: 220rpx;
+  padding: 8rpx 12rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.9);
+  border-radius: 8rpx;
+  color: #fff;
+  background: rgba(43, 83, 46, 0.88);
+  box-shadow: 0 4rpx 12rpx rgba(31, 51, 29, 0.18);
+  font-size: 20rpx;
+  font-weight: 600;
+  line-height: 1.25;
+  transform: translate(-50%, -50%);
+}
+
+.marker-blue {
+  background: rgba(42, 103, 157, 0.9);
+}
+
+.marker-red {
+  background: rgba(178, 67, 62, 0.92);
+}
+
+.marker-dark {
+  background: rgba(46, 57, 43, 0.84);
+}
+
+.route-arrow {
+  position: absolute;
+  z-index: 2;
+  opacity: 0.9;
+}
+
+.zoom-hint {
+  position: absolute;
+  right: 18rpx;
+  bottom: 18rpx;
+  z-index: 4;
+  padding: 8rpx 14rpx;
+  border-radius: 8rpx;
+  color: #fff;
+  background: rgba(25, 43, 22, 0.72);
+  font-size: 21rpx;
+}
+
+.map-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 22rpx 6rpx 4rpx;
+}
+
+.map-level {
+  color: #285b32;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.map-description {
+  margin-top: 8rpx;
+  color: #687062;
+  font-size: 23rpx;
+  line-height: 1.55;
+}
+
+.swipe-tip {
+  flex: 0 0 auto;
+  color: #8a9185;
+  font-size: 21rpx;
+}
+
+.route-notice {
+  margin-top: 16rpx;
+  padding: 20rpx 22rpx;
+  border-radius: 12rpx;
+  color: #53604d;
+  background: #eef6e9;
+  font-size: 23rpx;
+  line-height: 1.6;
+}
+
+.route-notice.subtle {
+  background: #f6f4ec;
+}
+
+.notice-title {
+  margin-bottom: 4rpx;
+  color: #315e35;
+  font-weight: 700;
+}
+
+.action-card {
+  margin-top: 24rpx;
+  padding: 24rpx;
+}
+
+button::after {
+  border: 0;
+}
+
+.navigation-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  border-radius: 14rpx;
+  color: #fff;
+  background: #356f38;
+  font-size: 29rpx;
+  font-weight: 700;
+}
+
+.navigation-button.needs-coordinate {
+  color: #51614a;
+  background: #dfe9da;
+}
+
+.secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.secondary-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 78rpx;
+  border: 1rpx solid #cbdac4;
+  border-radius: 14rpx;
+  color: #315e35;
+  background: #fff;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.coordinate-tip {
+  margin-top: 16rpx;
+  color: #8a6f55;
+  font-size: 22rpx;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.arrival-tip {
+  margin-top: 24rpx;
+  padding: 26rpx;
+  color: #66705f;
+  font-size: 23rpx;
+  line-height: 1.65;
+}
+
+.arrival-title {
+  margin-bottom: 8rpx;
+  color: #315e35;
+  font-size: 27rpx;
+  font-weight: 700;
+}

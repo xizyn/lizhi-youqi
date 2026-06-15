@@ -1,0 +1,37 @@
+<view class="page member-page">
+  <view class="points-card">
+    <view class="points-label">当前可用积分</view>
+    <view class="points-value">{{summary.availablePoints}}</view>
+    <view class="points-note">100积分 = 1元 · 每单最多抵扣商品金额的5%</view>
+    <view class="points-stats">
+      <view>
+        <view class="stat-value">{{summary.earnedPoints}}</view>
+        <view class="stat-label">累计获得</view>
+      </view>
+      <view>
+        <view class="stat-value">{{summary.usedPoints}}</view>
+        <view class="stat-label">累计扣减/使用</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">积分明细</view>
+    <view wx:if="{{summary.records.length == 0}}" class="empty">暂无积分记录</view>
+    <view wx:else>
+      <view class="point-row {{item.expired ? 'expired' : ''}}" wx:for="{{summary.records}}" wx:key="id">
+        <view class="point-main">
+          <view class="point-title">{{item.title}}</view>
+          <view class="point-meta">{{item.reason || '积分记录'}}</view>
+          <view class="point-meta">{{item.time}} · {{item.expireText}}</view>
+        </view>
+        <view class="point-value {{item.points > 0 ? 'plus' : 'minus'}}">{{item.valueText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rule-card">
+    <view class="section-title">积分规则</view>
+    <view class="rule-item" wx:for="{{summary.rules}}" wx:key="*this">{{item}}</view>
+  </view>
+</view>

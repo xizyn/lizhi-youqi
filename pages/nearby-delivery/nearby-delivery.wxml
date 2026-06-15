@@ -1,0 +1,220 @@
+<view class="nearby-page">
+  <view class="hero">
+    <view class="hero-title">附近果园直送</view>
+    <view class="hero-subtitle">{{nearbyConfig.subtitle}}</view>
+  </view>
+
+  <view wx:if="{{submitBlocked}}" class="blocked-notice">
+    <text>{{salesStatus.label}}：{{salesStatus.description}}</text>
+  </view>
+
+  <view class="content-wrap">
+    <view class="form-section scope-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-nearby.png" mode="aspectFit"></image>
+        <view>
+          <view class="heading-title">配送范围</view>
+          <view class="heading-subtitle">目前仅安排以下深圳本地区域</view>
+        </view>
+      </view>
+      <view class="scope-tags">
+        <view wx:for="{{nearbyConfig.supportedAreas}}" wx:key="*this" class="scope-tag">{{item}}</view>
+      </view>
+      <view class="scope-note">{{nearbyConfig.scopeNote}}</view>
+    </view>
+
+    <view class="rule-card" bindtap="toggleRuleDetails">
+      <view class="rule-summary">
+        <image class="rule-icon" src="/assets/icons/home-bell.png" mode="aspectFit"></image>
+        <text>{{nearbyConfig.summaryNotice}}</text>
+        <view class="rule-link">{{showRuleDetails ? '收起说明' : '查看说明'}} <text>{{showRuleDetails ? '⌃' : '›'}}</text></view>
+      </view>
+      <view wx:if="{{showRuleDetails}}" class="rule-detail">{{nearbyConfig.detailNotice}}</view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-delivery.png" mode="aspectFit"></image>
+        <view class="heading-title">配送区域</view>
+      </view>
+      <view class="area-grid">
+        <view
+          wx:for="{{nearbyAreaCards}}"
+          wx:key="value"
+          class="area-option {{form.nearbyArea == item.value ? 'active' : ''}} {{!item.supported ? 'unsupported' : ''}}"
+          data-area="{{item.value}}"
+          bindtap="selectNearbyArea"
+        >
+          <text>{{item.label}}</text>
+          <text wx:if="{{form.nearbyArea == item.value}}" class="option-check">✓</text>
+        </view>
+      </view>
+
+      <view wx:if="{{isUnsupportedArea}}" class="unsupported-card">
+        <view class="unsupported-title">{{nearbyConfig.unsupportedNotice}}</view>
+        <view class="unsupported-actions">
+          <button bindtap="goPickupOrder">去自提下单</button>
+          <button bindtap="goExpressOrder">去顺丰冷运</button>
+        </view>
+      </view>
+
+      <view wx:else class="schedule-tip">
+        <text class="schedule-label">预计配送</text>
+        <text>{{nearbyConfig.scheduleNotice}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{!isUnsupportedArea}}" class="form-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-service.png" mode="aspectFit"></image>
+        <view class="heading-title">收件信息</view>
+      </view>
+      <view class="compact-field">
+        <text class="compact-label">您的姓氏</text>
+        <input class="compact-input" value="{{form.recipientName}}" data-field="recipientName" bindinput="handleInput" placeholder="例如：陈" />
+      </view>
+      <view class="compact-field">
+        <text class="compact-label">联系电话</text>
+        <input class="compact-input" type="number" maxlength="11" value="{{form.recipientPhone}}" data-field="recipientPhone" bindinput="handleInput" placeholder="请填写能随时联系到您的手机号" />
+      </view>
+      <view class="address-field">
+        <text class="compact-label">详细地址</text>
+        <textarea class="address-input" maxlength="160" value="{{form.address}}" data-field="address" bindinput="handleInput" placeholder="例如：珠光村XX栋XX室 / 深职大XX宿舍"></textarea>
+        <view class="address-tip">小区、宿舍、楼栋和门牌号请尽量写清楚，方便配送员找到您。</view>
+      </view>
+    </view>
+
+    <view wx:if="{{!isUnsupportedArea}}" class="form-section purchase-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-pickup.png" mode="aspectFit"></image>
+        <view>
+          <view class="heading-title">选购荔枝</view>
+          <view class="heading-subtitle">斤数支持自由填写，可保留一位小数</view>
+        </view>
+      </view>
+
+      <view class="reference-price">
+        <view class="price-item">
+          <text>桂味参考单价</text>
+          <text>¥{{guiweiUnitPriceText}}/斤</text>
+        </view>
+        <view class="price-divider"></view>
+        <view class="price-item">
+          <text>糯米糍参考单价</text>
+          <text>¥{{nuomiciUnitPriceText}}/斤</text>
+        </view>
+      </view>
+
+      <view class="segment-control">
+        <view class="segment-item {{form.purchaseMode == '单品购买' ? 'active' : ''}}" data-mode="单品购买" bindtap="selectPurchaseMode">单品购买</view>
+        <view class="segment-item {{form.purchaseMode == '混装购买' ? 'active' : ''}}" data-mode="混装购买" bindtap="selectPurchaseMode">
+          混装购买
+          <text wx:if="{{form.purchaseMode == '混装购买'}}" class="selected-check">✓</text>
+        </view>
+      </view>
+
+      <block wx:if="{{form.purchaseMode == '单品购买'}}">
+        <view class="variety-switch">
+          <view class="variety-option {{form.singleVariety == '桂味' ? 'active' : ''}}" data-variety="桂味" bindtap="selectSingleVariety">
+            <image src="/assets/images/products/guiwei-5.jpg" mode="aspectFill"></image>
+            <view><text>桂味</text><text>¥{{guiweiUnitPriceText}}/斤</text></view>
+          </view>
+          <view class="variety-option {{form.singleVariety == '糯米糍' ? 'active' : ''}}" data-variety="糯米糍" bindtap="selectSingleVariety">
+            <image src="/assets/images/products/nuomici-5.jpg" mode="aspectFill"></image>
+            <view><text>糯米糍</text><text>¥{{nuomiciUnitPriceText}}/斤</text></view>
+          </view>
+        </view>
+        <view class="weight-card">
+          <view class="weight-head"><text>{{form.singleVariety}}斤数</text><text>支持一位小数</text></view>
+          <view class="weight-input-wrap">
+            <input class="weight-input" type="digit" value="{{form.singleWeight}}" data-field="singleWeight" bindinput="handleInput" placeholder="例如 0.5、3.5 或 12" />
+            <text>斤</text>
+          </view>
+          <view class="quick-weight-row">
+            <view wx:for="{{quickWeightOptions}}" wx:key="*this" class="quick-weight-button {{form.singleWeight == item ? 'active' : ''}}" data-field="singleWeight" data-weight="{{item}}" bindtap="fillQuickWeight">{{item}}斤</view>
+          </view>
+        </view>
+      </block>
+
+      <view wx:else class="mixed-grid">
+        <view class="weight-card">
+          <view class="weight-head"><text>桂味斤数</text><text>¥{{guiweiUnitPriceText}}/斤</text></view>
+          <view class="weight-input-wrap">
+            <input class="weight-input" type="digit" value="{{form.guiweiWeight}}" data-field="guiweiWeight" bindinput="handleInput" placeholder="自由填写" />
+            <text>斤</text>
+          </view>
+          <view class="quick-weight-row">
+            <view wx:for="{{quickWeightOptions}}" wx:key="*this" class="quick-weight-button {{form.guiweiWeight == item ? 'active' : ''}}" data-field="guiweiWeight" data-weight="{{item}}" bindtap="fillQuickWeight">{{item}}斤</view>
+          </view>
+        </view>
+        <view class="weight-card">
+          <view class="weight-head"><text>糯米糍斤数</text><text>¥{{nuomiciUnitPriceText}}/斤</text></view>
+          <view class="weight-input-wrap">
+            <input class="weight-input" type="digit" value="{{form.nuomiciWeight}}" data-field="nuomiciWeight" bindinput="handleInput" placeholder="自由填写" />
+            <text>斤</text>
+          </view>
+          <view class="quick-weight-row">
+            <view wx:for="{{quickWeightOptions}}" wx:key="*this" class="quick-weight-button {{form.nuomiciWeight == item ? 'active' : ''}}" data-field="nuomiciWeight" data-weight="{{item}}" bindtap="fillQuickWeight">{{item}}斤</view>
+          </view>
+        </view>
+      </view>
+      <view class="free-weight-note">快捷斤数只用于快速填入，点击后仍可手动修改。</view>
+    </view>
+
+    <view wx:if="{{!isUnsupportedArea}}" class="form-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-pickup.png" mode="aspectFit"></image>
+        <view class="heading-title">礼盒与备注</view>
+      </view>
+      <view class="segment-control gift-control">
+        <view class="segment-item {{form.needGiftBox == '否' ? 'active' : ''}}" data-value="否" bindtap="selectGiftBox">
+          不需要礼盒
+          <text wx:if="{{form.needGiftBox == '否'}}" class="selected-check">✓</text>
+        </view>
+        <view class="segment-item {{form.needGiftBox == '是' ? 'active' : ''}}" data-value="是" bindtap="selectGiftBox">
+          需要礼盒
+          <text wx:if="{{form.needGiftBox == '是'}}" class="selected-check">✓</text>
+        </view>
+      </view>
+      <view wx:if="{{form.needGiftBox == '是'}}" class="gift-grid">
+        <view>
+          <text>5斤礼盒 · ¥{{giftBox5UnitPriceText}}/个</text>
+          <input type="number" value="{{form.giftBox5Count}}" data-field="giftBox5Count" bindinput="handleInput" placeholder="0" />
+        </view>
+        <view>
+          <text>10斤礼盒 · ¥{{giftBox10UnitPriceText}}/个</text>
+          <input type="number" value="{{form.giftBox10Count}}" data-field="giftBox10Count" bindinput="handleInput" placeholder="0" />
+        </view>
+      </view>
+      <view class="remark-title">备注（选填）</view>
+      <textarea class="remark-input" maxlength="100" value="{{form.note}}" data-field="note" bindinput="handleInput" placeholder="例如配送时间、送礼要求、其他说明"></textarea>
+    </view>
+
+    <view wx:if="{{!isUnsupportedArea}}" class="form-section preview-section">
+      <view class="section-heading">
+        <image class="heading-icon" src="/assets/icons/home-delivery.png" mode="aspectFit"></image>
+        <view class="heading-title">订单预览</view>
+      </view>
+      <view wx:if="{{guiweiAmount > 0}}" class="preview-row">
+        <view><text>桂味金额</text><text>{{guiweiWeightText}}斤 × ¥{{guiweiUnitPriceText}}/斤</text></view>
+        <text>¥{{guiweiAmountMoneyText}}</text>
+      </view>
+      <view wx:if="{{nuomiciAmount > 0}}" class="preview-row">
+        <view><text>糯米糍金额</text><text>{{nuomiciWeightText}}斤 × ¥{{nuomiciUnitPriceText}}/斤</text></view>
+        <text>¥{{nuomiciAmountMoneyText}}</text>
+      </view>
+      <view wx:if="{{guiweiAmount == 0 && nuomiciAmount == 0}}" class="preview-empty">填写购买斤数后，这里会显示价格明细</view>
+      <view class="preview-line"><text>礼盒费用</text><text>¥{{giftBoxFeeMoneyText}}</text></view>
+      <view class="preview-line"><text>附近送配送费</text><text>¥{{deliveryFeeMoneyText}}</text></view>
+      <view class="preview-line weight-line"><text>总斤数</text><text>{{totalWeightText}}</text></view>
+      <view class="preview-total"><text>预计金额</text><text>¥{{estimatedAmountMoneyText}}</text></view>
+      <view class="preview-tip">{{nearbyConfig.priceNotice}}</view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+  <view wx:if="{{!isUnsupportedArea}}" class="checkout-bar">
+    <view class="checkout-amount"><text>预计金额</text><text>¥{{estimatedAmountMoneyText}}</text></view>
+    <button class="checkout-button" disabled="{{nearbySubmitDisabled}}" bindtap="submitForm">{{submitButtonText}}</button>
+  </view>
+</view>

@@ -1,0 +1,87 @@
+<view class="location-page">
+  <view class="location-hero">
+    <view class="hero-kicker">深圳本地 · 自家果园</view>
+    <view class="hero-title">果园位置与导航</view>
+    <view class="address-row">
+      <view class="address-pin"></view>
+      <text>{{orchard.address}}</text>
+    </view>
+    <view class="hero-note">{{orchard.guideNotice}}</view>
+  </view>
+
+  <view class="map-card">
+    <view class="map-tabs">
+      <view
+        wx:for="{{maps}}"
+        wx:key="id"
+        class="map-tab {{activeIndex == index ? 'active' : ''}}"
+        data-index="{{index}}"
+        bindtap="selectMap"
+      >{{item.title}}</view>
+    </view>
+
+    <swiper
+      class="map-swiper"
+      current="{{activeIndex}}"
+      duration="260"
+      bindchange="handleSwiperChange"
+    >
+      <swiper-item wx:for="{{maps}}" wx:key="id">
+        <view class="map-stage" bindtap="previewMap">
+          <image class="map-image" src="{{item.image}}" mode="widthFix"></image>
+          <image
+            wx:if="{{item.routeArrow}}"
+            class="route-arrow"
+            src="{{item.routeArrow.image}}"
+            mode="aspectFit"
+            style="{{item.routeArrow.style}}"
+          ></image>
+          <view
+            wx:for="{{item.markers}}"
+            wx:for-item="marker"
+            wx:key="label"
+            class="map-marker marker-{{marker.tone}}"
+            style="{{marker.style}}"
+          >{{marker.label}}</view>
+          <view class="zoom-hint">点击查看大图</view>
+        </view>
+      </swiper-item>
+    </swiper>
+
+    <view class="map-meta">
+      <view>
+        <view class="map-level">{{activeMap.title}} · 第{{activeIndex + 1}}张/共{{maps.length}}张</view>
+        <view class="map-description">{{activeMap.description}}</view>
+      </view>
+      <view class="swipe-tip">左右滑动切换</view>
+    </view>
+
+    <view class="route-notice" wx:if="{{activeMap.id == 'entrance'}}">
+      <view class="notice-title">入口提示</view>
+      <view>{{orchard.entranceNotice}}</view>
+    </view>
+
+    <view class="route-notice subtle" wx:if="{{activeMap.id == 'landmark'}}">
+      <view class="notice-title">停车提示</view>
+      <view>{{orchard.parkingNotice}}</view>
+    </view>
+  </view>
+
+  <view class="action-card">
+    <button class="navigation-button {{!coordinateReady ? 'needs-coordinate' : ''}}" bindtap="openNavigation">
+      {{coordinateReady ? '打开地图导航' : '打开地图导航（待配置坐标）'}}
+    </button>
+    <view class="secondary-actions">
+      <button bindtap="copyAddress">复制地址</button>
+      <button bindtap="contactService">联系果园</button>
+    </view>
+    <view class="coordinate-tip" wx:if="{{!coordinateReady}}">
+      当前未配置准确经纬度，为避免错误导航，暂不调用地图。
+    </view>
+  </view>
+
+  <view class="arrival-tip">
+    <view class="arrival-title">到达建议</view>
+    <view>先看“周边位置”确认区域，再用“附近地标”找到珠光路314号，最后根据“果园入口”完成最后一段步行。</view>
+  </view>
+</view>

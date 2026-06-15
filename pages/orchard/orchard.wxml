@@ -1,0 +1,40 @@
+<view class="page orchard-page">
+  <view class="intro-band">
+    <view class="eyebrow">深圳本地果园</view>
+    <view class="section-title">{{orchard.headline}}</view>
+    <view class="intro-text">{{orchard.summary}}</view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">我们更在意成熟度</view>
+    <view class="process-list">
+      <view class="process-item" wx:for="{{orchard.process}}" wx:key="*this">
+        <view class="process-index">{{index + 1}}</view>
+        <view>{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">果园特点</view>
+    <view class="feature-grid">
+      <view class="feature-item" wx:for="{{orchard.sellingPoints}}" wx:key="*this">
+        <view class="feature-dot"></view>
+        <view>{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section location-card">
+    <view class="location-label">果园位置</view>
+    <view class="location-text">{{orchard.location}}</view>
+  </view>
+
+  <view class="section notice">{{orchard.addressNote}}</view>
+
+  <view class="button-stack">
+    <button class="action-btn primary-btn" data-url="/pages/reminder/reminder" bindtap="navigateTo">预约2027开售提醒</button>
+    <button class="action-btn green-btn" data-url="/pages/picking/picking" bindtap="navigateTo">预约自提</button>
+    <button class="action-btn plain-btn" data-url="/pages/risk/risk" bindtap="navigateTo">查看风险告知</button>
+  </view>
+</view>

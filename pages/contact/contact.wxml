@@ -1,0 +1,35 @@
+<view class="page contact-page">
+  <view class="page-head">
+    <view class="page-title">添加客服微信，享一对一专属服务</view>
+    <view class="benefit-list">
+      <view>开售第一时间通知，不错过尝鲜期</view>
+      <view>订单单独确认，采摘发货随时跟进</view>
+      <view>售后快速响应，问题高效处理</view>
+    </view>
+  </view>
+
+  <view class="contact-card">
+    <view class="label">客服微信号</view>
+    <view class="wechat-row">
+      <view class="wechat-id">{{contact.wechatId}}</view>
+      <button class="copy-btn" bindtap="copyWechat">复制微信号</button>
+    </view>
+  </view>
+
+  <view class="qr-card" wx:if="{{contact.qrCodeReady}}">
+    <image class="qr-image" src="{{contact.qrCode}}" mode="aspectFit"></image>
+    <view class="qr-tip">打开微信扫一扫，添加客服微信</view>
+  </view>
+
+  <view class="qr-card qr-unavailable" wx:else>
+    <view class="qr-guide-title">微信搜索添加</view>
+    <view class="qr-guide-id">{{contact.wechatId}}</view>
+    <view class="qr-tip">复制微信号后，在微信中搜索添加客服</view>
+  </view>
+
+  <view class="contact-card service-card">
+    <view class="label">客服服务时间</view>
+    <view class="service-time">{{contact.serviceTime}}</view>
+    <view class="desc">非服务时间可先留言，客服上线后会尽快回复。</view>
+  </view>
+</view>

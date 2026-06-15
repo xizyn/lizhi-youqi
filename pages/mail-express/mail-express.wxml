@@ -1,0 +1,109 @@
+<view class="page form-page express-order-page">
+  <view class="page-head">
+    <view class="page-title">{{title}}</view>
+    <view class="page-subtitle">{{subtitle}}</view>
+  </view>
+
+  <view class="rule-card">
+    <view class="rule-summary" bindtap="toggleRuleDetails">
+      <view class="rule-copy">
+        <view class="rule-icon">运</view>
+        <view class="rule-summary-text">{{expressRuleSummary}}</view>
+      </view>
+      <view class="rule-link">{{showRuleDetails ? '收起说明' : '查看说明'}} <text class="rule-arrow">{{showRuleDetails ? '⌃' : '›'}}</text></view>
+    </view>
+    <view class="rule-detail" wx:if="{{showRuleDetails}}">
+      <view>{{expressRuleDetail}}</view>
+      <view class="remote-rule">{{remoteNotice}}</view>
+    </view>
+  </view>
+
+  <view class="status-banner {{statusBannerClass}}" wx:if="{{salesStatus}}">
+    <view class="status-title">{{salesStatus.label}}</view>
+    <view class="status-desc">{{salesStatus.description}}</view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">商品信息</view>
+    <view class="product-row">
+      <image class="product-image" src="{{selectedSkuImage}}" mode="aspectFill"></image>
+      <view class="product-info">
+        <view class="product-name">{{selectedSkuName}}</view>
+        <view class="product-meta">{{fruitWeightText}} · 预估计费 {{estimatedCourierWeightText}}</view>
+        <view class="product-price">¥{{productPrice}} / 箱</view>
+      </view>
+    </view>
+
+    <view class="quantity-row">
+      <view>
+        <view class="row-label">数量</view>
+        <view class="row-hint">按所选规格整箱配送</view>
+      </view>
+      <view class="stepper">
+        <view class="stepper-button" bindtap="decreaseQuantity">−</view>
+        <input class="stepper-input" type="number" value="{{form.quantity}}" data-field="quantity" bindinput="handleInput"></input>
+        <view class="stepper-button" bindtap="increaseQuantity">+</view>
+      </view>
+    </view>
+
+    <view class="product-summary">
+      <view class="summary-line"><text>商品小计</text><text>¥{{productSubtotalMoneyText}}</text></view>
+      <view class="summary-line"><text>参考运费</text><text class="green-text">{{referenceShippingFeeText}}</text></view>
+      <view class="summary-note">运费按商品规格、数量和收件地区估算，最终以发货前确认及顺丰结算为准。</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">收件信息</view>
+
+    <view class="compact-field">
+      <view class="field-label">收件人</view>
+      <input class="compact-input" value="{{form.recipientName}}" data-field="recipientName" bindinput="handleInput" placeholder="请输入收件人姓名"></input>
+    </view>
+    <view class="compact-field">
+      <view class="field-label">手机号</view>
+      <input class="compact-input" type="number" maxlength="11" value="{{form.recipientPhone}}" data-field="recipientPhone" bindinput="handleInput" placeholder="请输入收件人手机号"></input>
+    </view>
+    <picker class="compact-field" mode="region" value="{{form.region}}" bindchange="handleRegionChange">
+      <view class="field-label">省市区</view>
+      <view class="picker-value {{form.regionText ? '' : 'placeholder'}}">{{form.regionText || '请选择省 / 市 / 区'}}</view>
+      <view class="field-arrow">›</view>
+    </picker>
+    <view class="address-field">
+      <view class="field-label">详细地址</view>
+      <textarea class="address-input" maxlength="240" value="{{form.address}}" data-field="address" bindinput="handleInput" placeholder="街道、楼栋、门牌号等"></textarea>
+    </view>
+
+    <view class="remote-tip" wx:if="{{isRemoteDelivery}}">{{remoteNotice}}</view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">备注</view>
+    <textarea class="note-input" maxlength="240" value="{{form.note}}" data-field="note" bindinput="handleInput" placeholder="混装搭配偏好、配送要求或其他说明"></textarea>
+  </view>
+
+  <view class="section-card fee-card">
+    <view class="section-title">费用预览</view>
+    <view class="fee-line"><text>商品金额</text><text>¥{{productSubtotalMoneyText}}</text></view>
+    <view class="fee-line"><text>参考运费</text><text>{{referenceShippingFeeText}}</text></view>
+    <view class="fee-line"><text>礼盒费用</text><text>¥0.00</text></view>
+    <view class="fee-line"><text>优惠抵扣</text><text>确认订单页可选择</text></view>
+    <view class="fee-total"><text>预估合计</text><text>{{estimatedTotalRangeText}}</text></view>
+    <view class="fee-tip">{{expressOrderTip}}</view>
+  </view>
+
+  <view class="transit-card">
+    <view class="transit-title">配送时效</view>
+    <view class="transit-text">{{expressTransitNotice}}</view>
+  </view>
+
+  <view class="bottom-placeholder"></view>
+
+  <view class="submit-bar">
+    <view class="submit-total">
+      <view class="submit-label">预估合计</view>
+      <view class="submit-price">{{estimatedTotalRangeText}}</view>
+    </view>
+    <button class="submit-button" disabled="{{submitBlocked}}" bindtap="submitForm">{{submitButtonText}}</button>
+  </view>
+</view>

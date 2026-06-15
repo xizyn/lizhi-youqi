@@ -1,0 +1,260 @@
+<view class="report-page" wx:if="{{authorized}}">
+  <view class="page-skeleton" wx:if="{{loading}}">
+    <view class="skeleton-card">
+      <view class="skeleton-line medium"></view>
+      <view class="skeleton-line"></view>
+      <view class="skeleton-block"></view>
+    </view>
+    <view class="skeleton-card">
+      <view class="skeleton-line short"></view>
+      <view class="skeleton-block"></view>
+    </view>
+    <view class="skeleton-card">
+      <view class="skeleton-line medium"></view>
+      <view class="skeleton-line"></view>
+    </view>
+  </view>
+
+  <view class="page-header">
+    <view class="header-kicker">荔枝有期 · 管理后台</view>
+    <view class="header-title">订单报表 / 导出</view>
+    <view class="header-desc">用于每日采摘、分拣、配送、发货和对账</view>
+  </view>
+
+  <view class="section-card date-card">
+    <view class="card-heading">
+      <view>
+        <view class="card-title">选择统计日期</view>
+        <view class="card-note">打开页面默认统计今日订单</view>
+      </view>
+      <view class="format-badge">YYYY-MM-DD</view>
+    </view>
+
+    <view class="range-grid">
+      <view
+        wx:for="{{ranges}}"
+        wx:key="id"
+        class="range-item {{activeRange == item.id ? 'active' : ''}}"
+        data-range="{{item.id}}"
+        bindtap="selectRange"
+      >{{item.label}}</view>
+    </view>
+
+    <view class="custom-date-row" wx:if="{{activeRange == 'custom'}}">
+      <picker mode="date" value="{{startDate}}" data-field="startDate" bindchange="handleDateChange">
+        <view class="date-picker">
+          <text>开始日期</text>
+          <text>{{startDate}}</text>
+        </view>
+      </picker>
+      <view class="date-to">至</view>
+      <picker mode="date" value="{{endDate}}" data-field="endDate" bindchange="handleDateChange">
+        <view class="date-picker">
+          <text>结束日期</text>
+          <text>{{endDate}}</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="current-range">
+      <view class="range-dot"></view>
+      <view class="range-copy">
+        <text>当前统计</text>
+        <text>{{currentRangeText}}</text>
+      </view>
+      <view class="range-label">{{currentRangeLabel}}</view>
+    </view>
+  </view>
+
+  <view class="section-card overview-card">
+    <view class="card-heading">
+      <view>
+        <view class="card-title">订单概览</view>
+        <view class="card-note">更新于 {{lastUpdatedAt}}</view>
+      </view>
+    </view>
+    <view class="overview-grid">
+      <view class="metric-card tone-{{item.tone}}" wx:for="{{overviewCards}}" wx:key="key">
+        <view class="metric-value">{{item.value}}<text>单</text></view>
+        <view class="metric-label">{{item.label}}</view>
+      </view>
+    </view>
+    <view class="empty-banner" wx:if="{{!hasOrders}}">当前日期暂无订单</view>
+  </view>
+
+  <view class="section-card harvest-card">
+    <view class="card-heading">
+      <view>
+        <view class="card-title">采摘汇总</view>
+        <view class="card-note">已取消订单不计入，售后订单单独统计</view>
+      </view>
+    </view>
+    <view class="harvest-grid">
+      <view class="harvest-item tone-{{item.tone}}" wx:for="{{harvestCards}}" wx:key="key">
+        <view class="harvest-label">{{item.label}}</view>
+        <view class="harvest-value">{{item.value}}<text>{{item.unit}}</text></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card delivery-card">
+    <view class="card-heading">
+      <view>
+        <view class="card-title">配送类型统计</view>
+        <view class="card-note">快速安排自提、附近送与顺丰发货</view>
+      </view>
+    </view>
+    <view class="delivery-grid">
+      <view class="delivery-item tone-{{item.tone}}" wx:for="{{deliveryStats}}" wx:key="id">
+        <view class="delivery-title">{{item.label}}</view>
+        <view class="delivery-count">{{item.value}}<text>单</text></view>
+        <view class="delivery-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card action-card">
+    <view class="card-heading">
+      <view>
+        <view class="card-title">报表操作</view>
+        <view class="card-note">导出后可发送至微信或文件传输助手</view>
+      </view>
+    </view>
+    <view class="export-actions">
+      <button class="secondary-btn report-refresh-btn" disabled="{{exporting}}" bindtap="generateReport">生成/更新报表</button>
+      <button class="primary-btn {{!hasOrders ? 'is-disabled' : ''}}" disabled="{{exporting}}" bindtap="exportExcel">导出 Excel</button>
+      <button class="secondary-btn {{!hasOrders ? 'is-disabled' : ''}}" disabled="{{exporting}}" bindtap="exportCSV">导出 CSV</button>
+    </view>
+    <view class="no-order-tip" wx:if="{{!hasOrders}}">当前日期暂无订单，导出功能暂不可用</view>
+    <view class="excel-note" wx:if="{{!excelAvailable}}">当前未引入轻量 xlsx 库，导出 Excel 时会自动降级为 CSV。</view>
+  </view>
+
+  <view class="section-card detail-card">
+    <view class="card-heading">
+      <view>
+        <view class="card-title">报表明细</view>
+        <view class="card-note">手机端优先使用订单卡片查看</view>
+      </view>
+    </view>
+    <scroll-view class="report-tabs" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="tab-track">
+        <view
+          wx:for="{{reportTabs}}"
+          wx:key="id"
+          class="report-tab {{activeTab == item.id ? 'active' : ''}}"
+          data-tab="{{item.id}}"
+          bindtap="selectReportTab"
+        >
+          <text>{{item.label}}</text>
+          <text class="tab-count">{{item.count}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="panel-summary">
+      <text>{{activeTabLabel}}</text>
+      <text>共 {{visibleOrders.length}} 单</text>
+    </view>
+
+    <view class="empty-orders" wx:if="{{visibleOrders.length == 0}}">{{emptyText}}</view>
+    <view class="order-list" wx:else>
+      <view class="order-card" wx:for="{{visibleOrders}}" wx:key="id">
+        <view class="order-head">
+          <view>
+            <view class="order-no">{{item.orderNo}}</view>
+            <view class="order-time">{{item.createdAt}}</view>
+          </view>
+          <view class="status-tag status-{{item.statusTone}}">{{item.status}}</view>
+        </view>
+
+        <view class="customer-row">
+          <view class="customer-name">{{item.customerName}}</view>
+          <view class="customer-phone">{{item.phone}}</view>
+        </view>
+
+        <view class="product-block">
+          <view class="product-detail">{{item.productDetail}}</view>
+          <view class="weight-total">{{item.totalWeight}}斤</view>
+          <view class="weight-breakdown">
+            <text>桂味 {{item.guiweiWeight}}斤</text>
+            <text>糯米糍 {{item.nuomiciWeight}}斤</text>
+          </view>
+        </view>
+
+        <view class="info-row"><text>配送类型</text><text>{{item.deliveryMethod}}</text></view>
+        <view class="info-row"><text>地址 / 自提点</text><text>{{item.address}}</text></view>
+        <view class="info-row" wx:if="{{item.trackingNo}}"><text>顺丰单号</text><text>{{item.trackingNo}}</text></view>
+
+        <view class="order-foot">
+          <view class="remark">备注：{{item.remark}}</view>
+          <view class="amount"><text>预计金额</text><text>¥{{item.amount}}</text></view>
+        </view>
+      </view>
+    </view>
+
+    <button class="table-toggle" wx:if="{{hasOrders}}" bindtap="toggleTable">{{showTable ? '收起横向表格预览' : '查看横向表格预览'}}</button>
+    <view class="table-preview" wx:if="{{showTable}}">
+      <view class="table-tip">左右滑动查看，导出文件包含完整字段</view>
+      <scroll-view class="table-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="report-table" style="width: {{tableWidth}};">
+          <view class="table-row table-head">
+            <view class="table-cell" wx:for="{{report.displayColumns}}" wx:for-item="column" wx:key="key">{{column.label}}</view>
+          </view>
+          <view class="table-row" wx:for="{{report.displayRecords}}" wx:for-item="record" wx:key="id">
+            <view class="table-cell" wx:for="{{record.cells}}" wx:for-item="cell" wx:key="key">{{cell.value || '-'}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="section-card preview-section">
+    <view class="card-heading">
+      <view>
+        <view class="card-title">导出预览</view>
+        <view class="card-note">Excel 可用时生成 3 个 Sheet</view>
+      </view>
+    </view>
+    <view class="preview-list">
+      <view class="preview-card" wx:for="{{previewCards}}" wx:key="id">
+        <view class="sheet-badge">{{item.sheet}}</view>
+        <view class="preview-copy">
+          <view class="preview-title">{{item.title}}</view>
+          <view class="preview-line">{{item.line1}}</view>
+          <view class="preview-line">{{item.line2}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card reminder-card">
+    <view class="reminder-head">
+      <image src="/assets/icons/home-bell.png" mode="aspectFit"></image>
+      <view>
+        <view class="card-title">自动备货提醒</view>
+        <view class="card-note">{{reminderStatusText}}</view>
+      </view>
+    </view>
+    <view class="reminder-copy">每日17:00后打开本页时检查一次，不会后台静默导出文件。</view>
+    <view class="reminder-highlight">当前选择：{{currentRangeText}}</view>
+    <view class="reminder-actions">
+      <button class="primary-btn {{!hasOrders ? 'is-disabled' : ''}}" bindtap="exportCurrentSelection">立即导出</button>
+      <button class="secondary-btn" bindtap="remindLater">稍后提醒</button>
+      <button class="text-btn" bindtap="disableReminderToday">今天不再提醒</button>
+    </view>
+  </view>
+
+  <view class="page-footnote">报表数据来自本地订单缓存，仅管理员可见</view>
+
+  <view class="export-loading-mask" wx:if="{{exporting}}">
+    <view class="export-loading-card">
+      <view class="export-loading-dots">
+        <view class="export-loading-dot"></view>
+        <view class="export-loading-dot"></view>
+        <view class="export-loading-dot"></view>
+      </view>
+      <view class="export-loading-text">{{exportMessage}}</view>
+      <view class="export-loading-note">请稍候，不要重复点击</view>
+    </view>
+  </view>
+</view>

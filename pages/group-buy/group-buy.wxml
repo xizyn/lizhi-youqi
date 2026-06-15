@@ -1,0 +1,77 @@
+<view class="page group-page">
+  <view class="form-head">
+    <view class="section-title">企业团购咨询登记</view>
+    <view class="section-subtitle">桂味、妃子笑可先登记团购意向。第一版只登记意向，不接支付。</view>
+  </view>
+
+  <view class="notice freight-notice">果品价格不包含运费。{{nearbyDeliveryScope}}{{freightNotice}}</view>
+
+  <view class="form-card">
+    <view class="field">
+      <view class="field-label">公司或组织名称</view>
+      <input class="field-input" placeholder="请填写公司、组织或采购方名称" value="{{form.companyName}}" data-field="companyName" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field-label">联系人</view>
+      <input class="field-input" placeholder="请填写联系人" value="{{form.contact}}" data-field="contact" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field-label">手机号</view>
+      <input class="field-input" type="number" maxlength="11" placeholder="用于后续沟通" value="{{form.phone}}" data-field="phone" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field-label">预计采购份数</view>
+      <input class="field-input" placeholder="如 30份、100份" value="{{form.quantity}}" data-field="quantity" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field-label">每份预算</view>
+      <input class="field-input" placeholder="如 100-150元/份" value="{{form.budget}}" data-field="budget" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field-label">想购买品种</view>
+      <picker mode="selector" range="{{varietyOptions}}" value="{{varietyIndex}}" data-field="variety" data-index-field="varietyIndex" bindchange="handlePicker">
+        <view class="picker-value">{{form.variety}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <view class="field-label">是否需要礼盒</view>
+      <picker mode="selector" range="{{giftBoxOptions}}" value="{{giftBoxIndex}}" data-field="giftBox" data-index-field="giftBoxIndex" bindchange="handlePicker">
+        <view class="picker-value">{{form.giftBox}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <view class="field-label">配送方式</view>
+      <picker mode="selector" range="{{deliveryOptions}}" value="{{deliveryIndex}}" data-field="delivery" data-index-field="deliveryIndex" bindchange="handlePicker">
+        <view class="picker-value">{{form.delivery}}</view>
+      </picker>
+    </view>
+
+    <view wx:if="{{freightRequired}}" class="notice inline-notice">{{freightNotice}}</view>
+
+    <view class="field">
+      <view class="field-label">配送区域</view>
+      <input class="field-input" placeholder="如 深职大、珠光村、深圳市内多点配送" value="{{form.area}}" data-field="area" bindinput="handleInput" />
+    </view>
+
+    <view class="field">
+      <view class="field-label">是否已知晓运费由买家承担</view>
+      <picker mode="selector" range="{{freightAckOptions}}" value="{{freightAckIndex}}" data-field="freightAccepted" data-index-field="freightAckIndex" bindchange="handlePicker">
+        <view class="picker-value">{{form.freightAccepted}}</view>
+      </picker>
+    </view>
+
+    <view class="field">
+      <view class="field-label">备注</view>
+      <textarea class="field-textarea" maxlength="240" placeholder="可填写发票、包装、分批配送等需求" value="{{form.note}}" data-field="note" bindinput="handleInput" />
+    </view>
+
+    <button class="action-btn green-btn submit-btn" bindtap="submitForm">提交团购咨询</button>
+  </view>
+</view>

@@ -1,0 +1,17 @@
+.form-head {
+  padding: 30rpx;
+  border-radius: 16rpx;
+  background: #eef6e5;
+}
+
+.freight-notice {
+  margin-top: 22rpx;
+}
+
+.inline-notice {
+  font-size: 24rpx;
+}
+
+.submit-btn {
+  margin-top: 8rpx;
+}

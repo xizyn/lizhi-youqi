@@ -1,0 +1,78 @@
+<view class="page detail-page">
+  <view class="detail-head">
+    <view>
+      <view class="order-no">订单号：{{detail.orderNoText}}</view>
+      <view class="head-subtitle">自家果园订单，最终采摘、配送与金额由客服确认。</view>
+    </view>
+    <view class="order-status {{detail.statusClass}}">{{detail.orderStatus}}</view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">订单状态</view>
+    <view class="status-row">
+      <view class="status-text {{detail.statusClass}}">{{detail.orderStatus}}</view>
+      <view class="status-tip">如状态有疑问，请联系客服确认。</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">客户信息</view>
+    <view class="info-row" wx:for="{{detail.customerRows}}" wx:key="label">
+      <view class="info-label">{{item.label}}</view>
+      <view class="info-value">{{item.value}}</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">商品明细</view>
+    <view class="info-row" wx:for="{{detail.productRows}}" wx:key="label">
+      <view class="info-label">{{item.label}}</view>
+      <view class="info-value">{{item.value}}</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">配送信息</view>
+    <view class="info-row" wx:for="{{detail.deliveryRows}}" wx:key="label">
+      <view class="info-label">{{item.label}}</view>
+      <view class="info-value">{{item.value}}</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">金额信息</view>
+    <view class="info-row" wx:for="{{detail.amountRows}}" wx:key="label">
+      <view class="info-label">{{item.label}}</view>
+      <view class="info-value amount-value">{{item.value}}</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">下单时间、备注</view>
+    <view class="info-row" wx:for="{{detail.metaRows}}" wx:key="label">
+      <view class="info-label">{{item.label}}</view>
+      <view class="info-value">{{item.value}}</view>
+    </view>
+  </view>
+
+  <view class="action-row">
+    <button class="mini-btn plain-btn" bindtap="contactService">联系客服</button>
+    <button wx:if="{{detail.canApplyAfterSale}}" class="mini-btn service-btn" bindtap="applyAfterSale">{{detail.afterSaleActionText}}</button>
+  </view>
+
+  <view class="section-card admin-card" wx:if="{{showAdminActions}}">
+    <view class="section-title">管理员操作区</view>
+    <view class="field">
+      <view class="field-label">修改订单状态</view>
+      <picker mode="selector" range="{{orderStatuses}}" value="{{detail.statusIndex}}" bindchange="handleStatusChange">
+        <view class="picker-value">{{detail.orderStatus}}</view>
+      </picker>
+    </view>
+    <view class="admin-actions">
+      <button class="mini-btn admin-btn" bindtap="markStocked">标记已备货</button>
+      <button class="mini-btn admin-btn" bindtap="markShipped">标记已送出</button>
+      <button class="mini-btn admin-btn" bindtap="inputTrackingNo">填写顺丰单号</button>
+      <button class="mini-btn admin-btn" bindtap="markCompleted">标记完成</button>
+    </view>
+  </view>
+</view>

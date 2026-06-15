@@ -1,0 +1,20 @@
+@import "../shared-form.wxss";
+
+.placeholder-card {
+  padding: 30rpx;
+  border-radius: 18rpx;
+  background: #fffdf7;
+}
+
+.placeholder-title {
+  color: #25331e;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.placeholder-text {
+  margin-top: 12rpx;
+  color: #6d7763;
+  font-size: 25rpx;
+  line-height: 1.7;
+}

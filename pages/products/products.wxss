@@ -1,0 +1,61 @@
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+  margin-top: 24rpx;
+}
+
+.product-card {
+  padding: 28rpx;
+  border-radius: 16rpx;
+  background: #fffdf6;
+}
+
+.product-head {
+  display: flex;
+  gap: 18rpx;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.product-name {
+  color: #25331e;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.product-season {
+  margin-top: 4rpx;
+  color: #6a6f5f;
+  font-size: 24rpx;
+}
+
+.product-status {
+  max-width: 210rpx;
+  padding: 8rpx 14rpx;
+  border-radius: 999rpx;
+  color: #a93531;
+  background: #fff1ec;
+  font-size: 22rpx;
+  text-align: center;
+}
+
+.product-desc {
+  margin-top: 20rpx;
+  color: #4f5b46;
+}
+
+.delivery-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 20rpx;
+  color: #35412d;
+  font-size: 25rpx;
+}
+
+.delivery-tag {
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  background: #eef6e5;
+}

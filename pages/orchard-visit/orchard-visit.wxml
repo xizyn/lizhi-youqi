@@ -1,0 +1,13 @@
+<view class="page placeholder-page">
+  <view class="page-head">
+    <view class="page-title">果园参观暂未开放</view>
+    <view class="page-subtitle">山地果园安全条件有限，暂不开放自由参观。</view>
+  </view>
+
+  <view class="placeholder-card">
+    <view class="placeholder-title">暂不开放自由参观</view>
+    <view class="placeholder-text">果园为山地果园，地势较陡，出于安全考虑，暂不开放自由参观。如有团购考察、拍摄记录或特殊需求，请添加客服微信沟通确认。</view>
+  </view>
+
+  <button class="submit-button" bindtap="contact">联系客服</button>
+</view>

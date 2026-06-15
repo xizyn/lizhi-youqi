@@ -1,0 +1,66 @@
+page { background: #f8f3e9; }
+.detail-page { padding-bottom: calc(110rpx + env(safe-area-inset-bottom)); }
+.status-card, .section-card { margin-bottom: 20rpx; padding: 26rpx; border: 1rpx solid rgba(79,125,70,.12); border-radius: 20rpx; background: #fffdf7; box-shadow: 0 10rpx 26rpx rgba(74,91,58,.05); }
+.status-card { background: linear-gradient(135deg,#edf6e7,#fffdf7); }
+.status-row, .section-head, .log-head, .input-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18rpx; }
+.status-title { color: #25331e; font-size: 38rpx; font-weight: 800; }
+.status-sub { margin-top: 8rpx; color: #73806c; font-size: 21rpx; }
+.status-pill, .log-role, .log-type { padding: 7rpx 14rpx; border-radius: 999rpx; font-size: 20rpx; font-weight: 700; }
+.status-pending { color: #9b6920; background: #fff0d2; }
+.status-processing { color: #2f6e95; background: #e5f2fb; }
+.status-resolved { color: #3f7335; background: #e4f2de; }
+.status-rejected, .status-cancelled, .status-default { color: #777d74; background: #edf0ea; }
+.status-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12rpx; margin-top: 24rpx; }
+.status-facts view { display: flex; flex-direction: column; gap: 7rpx; padding: 16rpx; border-radius: 14rpx; background: rgba(255,255,255,.68); color: #34432f; font-size: 22rpx; }
+.status-facts text:first-child { color: #7c8875; font-size: 20rpx; }
+.status-tip { margin-top: 18rpx; color: #667060; font-size: 22rpx; line-height: 1.65; }
+.section-title { color: #25331e; font-size: 30rpx; font-weight: 800; }
+.section-desc { margin-top: 7rpx; color: #84907d; font-size: 20rpx; line-height: 1.5; }
+.record-count { flex: 0 0 auto; color: #3f7335; font-size: 21rpx; }
+.order-reference { margin-top: 14rpx; color: #6b7565; font-size: 22rpx; }
+.description, .result-copy { margin-top: 18rpx; padding: 18rpx; border-radius: 12rpx; color: #4f5b49; background: #f3f7ef; font-size: 23rpx; line-height: 1.65; }
+.image-grid, .log-images, .upload-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12rpx; margin-top: 18rpx; }
+.image-grid image, .log-images image, .upload-item, .add-image { width: 100%; aspect-ratio: 1; border-radius: 12rpx; background: #eef2e9; }
+.image-grid image, .log-images image, .upload-item image { width: 100%; height: 100%; border-radius: 12rpx; }
+.image-empty, .log-empty, .result-empty { margin-top: 18rpx; color: #7a826f; font-size: 22rpx; line-height: 1.6; }
+.log-timeline { margin-top: 24rpx; }
+.log-item { position: relative; padding: 0 0 22rpx 34rpx; }
+.log-item::before { position: absolute; top: 18rpx; bottom: -4rpx; left: 8rpx; width: 2rpx; background: #dfe6da; content: ''; }
+.log-item:last-child::before { display: none; }
+.log-dot { position: absolute; top: 15rpx; left: 0; width: 18rpx; height: 18rpx; border: 4rpx solid #f8f3e9; border-radius: 50%; background: #9eaa98; box-shadow: 0 0 0 2rpx #d9e1d4; }
+.log-admin .log-dot { background: #4f7d46; }
+.log-user .log-dot { background: #8a9b81; }
+.log-card { padding: 20rpx; border: 1rpx solid #e4e9df; border-radius: 16rpx; background: #fff; }
+.log-admin .log-card { border-color: #d4e6cc; background: #eff7ea; }
+.log-system .log-card { border-color: #eceeea; background: #fafbf9; }
+.log-role { padding: 5rpx 12rpx; color: #42523c; background: #f0f2ed; }
+.log-admin .log-role { color: #315f2d; background: #dcefd4; }
+.log-system .log-role { color: #92988e; background: #f0f1ef; }
+.log-system .log-dot { background: #c4c9c1; box-shadow: 0 0 0 2rpx #e5e8e2; }
+.log-system .log-content, .log-system .log-time { color: #a0a69d; }
+.log-type { margin-left: 8rpx; padding: 5rpx 10rpx; color: #786646; background: #fff2d7; }
+.log-time { flex: 0 0 auto; color: #91998d; font-size: 19rpx; }
+.log-content { margin-top: 14rpx; color: #455040; font-size: 23rpx; line-height: 1.65; word-break: break-all; }
+.supplement-toggle { height: 72rpx; margin-top: 6rpx; border: 1rpx solid #8aaa80; border-radius: 999rpx; color: #3f7335; background: #fff; font-size: 24rpx; line-height: 70rpx; }
+.supplement-toggle::after, .submit-supplement::after, .contact-btn::after, .cancel-btn::after { border: 0; }
+.supplement-form { margin-top: 20rpx; padding-top: 22rpx; border-top: 1rpx solid #e7ebe3; }
+.input-head { color: #34432f; font-size: 22rpx; font-weight: 700; }
+.input-head text:last-child { color: #8a9183; font-weight: 400; }
+.supplement-form textarea { box-sizing: border-box; width: 100%; min-height: 180rpx; margin-top: 14rpx; padding: 18rpx; border: 1rpx solid #dfe4da; border-radius: 14rpx; color: #30392e; background: #fff; font-size: 24rpx; }
+.image-head { margin-top: 20rpx; }
+.upload-item { position: relative; overflow: hidden; }
+.remove-image { position: absolute; right: 0; bottom: 0; padding: 5rpx 10rpx; color: #fff; background: rgba(58,46,40,.72); font-size: 18rpx; }
+.add-image { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1rpx dashed #a8b99e; color: #5d7854; background: #f4f8ef; font-size: 20rpx; }
+.add-symbol { font-size: 42rpx; line-height: 1; }
+.submit-supplement { height: 74rpx; margin-top: 20rpx; border-radius: 999rpx; color: #fff; background: #4f7d46; font-size: 24rpx; font-weight: 700; line-height: 74rpx; }
+.submit-supplement[disabled] { color: rgba(255,255,255,.82); background: #88a681; }
+.result-type { margin-top: 18rpx; color: #3f7335; font-size: 27rpx; font-weight: 800; }
+.info-row { display: flex; justify-content: space-between; gap: 22rpx; padding: 16rpx 0; border-bottom: 1rpx solid #edf0e9; color: #697264; font-size: 23rpx; }
+.info-row text:last-child { color: #2f392c; text-align: right; }
+.local-note { margin-bottom: 20rpx; padding: 18rpx; border-radius: 14rpx; color: #687163; background: #eef5e8; font-size: 20rpx; line-height: 1.6; }
+.contact-note { margin: -4rpx 0 16rpx; color: #788173; font-size: 20rpx; line-height: 1.55; text-align: center; }
+.action-row { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14rpx; }
+.action-row button:only-child { grid-column: 1 / -1; }
+.contact-btn, .cancel-btn { height: 76rpx; border-radius: 999rpx; font-size: 25rpx; font-weight: 700; line-height: 76rpx; }
+.contact-btn { color: #fff; background: #4f7d46; }
+.cancel-btn { color: #a34a43; background: #fff4f1; }

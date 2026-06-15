@@ -1,0 +1,66 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/orders/orders",
+    "pages/order-detail/order-detail",
+    "pages/after-sales/after-sales",
+    "pages/after-sale-apply/after-sale-apply",
+    "pages/after-sale-detail/after-sale-detail",
+    "pages/after-sale-rules/after-sale-rules",
+    "pages/confirm-order/confirm-order",
+    "pages/profile/profile",
+    "pages/coupons/coupons",
+    "pages/points/points",
+    "pages/address/address",
+    "pages/help/help",
+    "pages/picking/picking",
+    "pages/pickup-location/pickup-location",
+    "pages/express/express",
+    "pages/mail-express/mail-express",
+    "pages/nearby-delivery/nearby-delivery",
+    "pages/orchard-visit/orchard-visit",
+    "pages/reminder/reminder",
+    "pages/risk/risk",
+    "pages/contact/contact",
+    "pages/admin-coupons/admin-coupons",
+    "pages/admin-reports/admin-reports",
+    "pages/admin-after-sales/admin-after-sales",
+    "pages/report-preview/report-preview",
+    "pages/admin/admin"
+  ],
+  "lazyCodeLoading": "requiredComponents",
+  "window": {
+    "navigationBarTitleText": "荔枝有期",
+    "navigationBarBackgroundColor": "#fff8ed",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f7f2e8"
+  },
+  "tabBar": {
+    "color": "#7a8270",
+    "selectedColor": "#4f7d46",
+    "backgroundColor": "#fffaf1",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/orders/orders",
+        "text": "订单",
+        "iconPath": "assets/tabbar/my.png",
+        "selectedIconPath": "assets/tabbar/my-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/tabbar/my.png",
+        "selectedIconPath": "assets/tabbar/my-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

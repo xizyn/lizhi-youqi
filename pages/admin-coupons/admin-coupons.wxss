@@ -1,0 +1,176 @@
+.admin-coupon-page {
+  min-height: 100vh;
+  padding: 34rpx 28rpx 130rpx;
+  background: #f8f3e9;
+  box-sizing: border-box;
+}
+
+.page-head {
+  padding: 12rpx 0 24rpx;
+}
+
+.page-title,
+.section-title {
+  color: #25331e;
+  font-size: 36rpx;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.section-title {
+  font-size: 31rpx;
+}
+
+.page-subtitle {
+  margin-top: 10rpx;
+  color: #7a826f;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.form-card,
+.coupon-card {
+  border-radius: 18rpx;
+  background: #fffdf6;
+  box-shadow: 0 12rpx 28rpx rgba(80, 96, 62, 0.08);
+}
+
+.form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  padding: 24rpx;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16rpx;
+}
+
+.field-label {
+  margin-bottom: 10rpx;
+  color: #53604a;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+.field-input,
+.picker-value {
+  min-height: 72rpx;
+  padding: 0 18rpx;
+  border-radius: 14rpx;
+  background: #f7f1e6;
+  color: #25331e;
+  font-size: 25rpx;
+  line-height: 72rpx;
+  box-sizing: border-box;
+}
+
+.action-btn,
+.mini-btn {
+  margin: 0;
+  border-radius: 14rpx;
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+.action-btn::after,
+.mini-btn::after {
+  border: 0;
+}
+
+.action-btn {
+  height: 78rpx;
+  line-height: 78rpx;
+}
+
+.green-btn {
+  color: #fffdf8;
+  background: #3f7335;
+}
+
+.coupon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  margin-top: 24rpx;
+}
+
+.coupon-card {
+  padding: 24rpx;
+}
+
+.coupon-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.coupon-name {
+  color: #25331e;
+  font-size: 30rpx;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.coupon-id {
+  margin-top: 6rpx;
+  color: #8a917f;
+  font-size: 21rpx;
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  color: #6d754f;
+  background: #f3eedf;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.status-active {
+  color: #2f7d42;
+  background: #e8f6e3;
+}
+
+.status-disabled {
+  color: #9a4b3f;
+  background: #fae9e5;
+}
+
+.coupon-lines {
+  margin-top: 16rpx;
+  color: #4f5b46;
+  font-size: 24rpx;
+  line-height: 1.75;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 18rpx;
+}
+
+.mini-btn {
+  min-width: 136rpx;
+  height: 58rpx;
+  padding: 0 18rpx;
+  color: #fffdf8;
+  background: #3f7335;
+  font-size: 22rpx;
+  line-height: 58rpx;
+}
+
+.gray-btn {
+  color: #5c6654;
+  background: #eee8dc;
+}
+
+.plain-btn {
+  color: #3f7335;
+  background: #eef6e7;
+}

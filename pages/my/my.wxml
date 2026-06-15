@@ -1,0 +1,33 @@
+<view class="page my-page">
+  <view class="my-head">
+    <view class="my-title">我的预约</view>
+    <view class="my-subtitle">本页只显示当前手机开发环境里的本地模拟数据。</view>
+  </view>
+
+  <view class="summary-row">
+    <view class="summary-item">
+      <view class="summary-num">{{reminderCount}}</view>
+      <view class="summary-label">开售提醒</view>
+    </view>
+    <view class="summary-item">
+      <view class="summary-num">{{groupBuyCount}}</view>
+      <view class="summary-label">团购登记</view>
+    </view>
+    <view class="summary-item">
+      <view class="summary-num">{{pickupCount}}</view>
+      <view class="summary-label">自提预约</view>
+    </view>
+  </view>
+
+  <view class="my-list">
+    <view class="my-link" wx:for="{{links}}" wx:key="text" data-url="{{item.url}}" data-type="{{item.type}}" bindtap="handleLinkTap">
+      <view>
+        <view class="link-title">{{item.text}}</view>
+        <view class="link-desc">{{item.desc}}</view>
+      </view>
+      <view class="link-arrow">›</view>
+    </view>
+  </view>
+
+  <button class="contact-button" bindtap="contactService">联系客服</button>
+</view>

@@ -1,0 +1,55 @@
+<view class="page mine-page">
+  <view class="mine-head">
+    <view class="mine-title">我的订单</view>
+  </view>
+
+  <scroll-view class="status-scroll" scroll-x="true" enhanced="true" show-scrollbar="false">
+    <view class="status-inner">
+      <view class="status-card {{item.activeClass}}" wx:for="{{statusCards}}" wx:key="key" data-filter="{{item.key}}" bindtap="filterByStatus">
+        <view class="status-num">{{item.count}}</view>
+        <view class="status-label">{{item.label}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="filter-pill">当前：{{activeFilterText}}</view>
+
+  <view wx:if="{{orders.length == 0}}" class="empty">当前筛选下暂无订单</view>
+
+  <view wx:else class="order-list">
+    <view class="order-card" wx:for="{{orders}}" wx:key="id">
+      <view class="order-top">
+        <view class="order-no">{{item.orderNo}}</view>
+        <view class="order-status {{item.statusClass}}">{{item.orderStatus}}</view>
+      </view>
+
+      <view class="order-main">
+        <view class="order-product">
+          <view class="product-name">{{item.productTitle}}</view>
+          <view class="product-meta">{{item.productSpecText}} · {{item.productQtyText}}</view>
+        </view>
+        <view class="order-amount">{{item.productAmountText}}</view>
+      </view>
+
+      <view class="order-sub">
+        <view class="order-line">配送方式：{{item.deliverySummary}}</view>
+        <view class="order-line">收件/自提：{{item.contactInfo}}</view>
+        <view class="order-time">下单时间：{{item.createdAt}}</view>
+      </view>
+
+      <view class="ship-box" wx:if="{{item.isShipped}}">
+        <view class="order-line">快递单号：{{item.trackingNoText}}</view>
+        <view class="order-line">发货时间：{{item.shipTimeText}}</view>
+        <view class="ship-actions">
+          <button class="mini-btn plain-btn ship-btn" data-tracking="{{item.trackingNo}}" bindtap="copyTrackingNo">复制单号</button>
+        </view>
+      </view>
+
+      <button class="mini-btn plain-btn detail-btn" data-index="{{index}}" bindtap="showOrderDetail">查看详情</button>
+    </view>
+  </view>
+
+  <view class="bottom-links">
+    <view class="bottom-link" bindtap="contactService">联系客服</view>
+  </view>
+</view>

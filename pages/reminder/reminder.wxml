@@ -1,0 +1,118 @@
+<view class="reminder-page">
+  <view class="reminder-hero">
+    <image class="hero-image" src="/assets/images/banner-lychee.png" mode="aspectFill"></image>
+    <view class="hero-overlay"></view>
+    <view class="hero-copy">
+      <view class="hero-tag">{{reminderConfig.currentStage}}</view>
+      <view class="hero-title">{{reminderConfig.reservationYear}}年荔枝开售提醒</view>
+      <view class="hero-desc">从挂果到成熟，我们会在这里持续更新。预约后，开售时可收到提醒。</view>
+    </view>
+  </view>
+
+  <view class="demo-notice" wx:if="{{localDemo}}">
+    预约功能演示模式：数据只保存在本机，微信通知将在接入云服务后启用。
+  </view>
+
+  <view class="section-block progress-section">
+    <view class="section-heading">
+      <view>
+        <view class="section-title">当前成熟进度</view>
+        <view class="section-subtitle">最近更新 {{reminderConfig.lastUpdated || '未填写'}}</view>
+      </view>
+      <view class="stage-badge">{{reminderConfig.currentStage}}</view>
+    </view>
+
+    <view class="progress-line">
+      <view class="progress-step step-{{item.state}}" wx:for="{{progressSteps}}" wx:key="label">
+        <view class="step-dot"></view>
+        <view class="step-label">{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="date-summary">
+      <view class="date-row">
+        <text>预计成熟</text>
+        <text>{{reminderConfig.expectedMaturityDate || '待更新'}}</text>
+      </view>
+      <view class="date-row">
+        <text>预计开售</text>
+        <text>{{reminderConfig.expectedSaleDate || '待更新'}}</text>
+      </view>
+      <view class="date-row" wx:if="{{reminderConfig.actualSaleDate}}">
+        <text>实际开售</text>
+        <text>{{reminderConfig.actualSaleDate}}</text>
+      </view>
+    </view>
+    <view class="situation-note">{{reminderConfig.situationNote}}</view>
+  </view>
+
+  <view class="section-block">
+    <view class="section-title">选择提醒品种</view>
+    <view class="section-subtitle">可修改选择，同一用户同一年只保留一条预约记录。</view>
+    <view class="variety-grid">
+      <view
+        class="variety-option {{item.selected ? 'active' : ''}}"
+        wx:for="{{varietyCards}}"
+        wx:key="label"
+        data-value="{{item.label}}"
+        bindtap="toggleVariety"
+      >
+        <text>{{item.label}}</text>
+        <text class="option-check" wx:if="{{item.selected}}">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-block status-section">
+    <view class="section-heading">
+      <view>
+        <view class="section-title">预约与微信通知</view>
+        <view class="notification-text tone-{{notificationTone}}">{{notificationText}}</view>
+      </view>
+      <view class="reservation-tag">{{isReserved ? '已预约' : '未预约'}}</view>
+    </view>
+
+    <view class="reservation-details" wx:if="{{isReserved}}">
+      <view class="detail-row"><text>预约年份</text><text>{{reservation.reservationYear}}年</text></view>
+      <view class="detail-row"><text>提醒品种</text><text>{{reservationVarietiesText}}</text></view>
+      <view class="detail-row"><text>预约时间</text><text>{{reservation.reservedAt}}</text></view>
+      <view class="detail-row"><text>预计开售</text><text>{{reminderConfig.expectedSaleDate}}</text></view>
+    </view>
+
+    <button class="primary-action" disabled="{{isReservationClosed && !isSoldOut}}" bindtap="handleMainAction">{{mainButtonText}}</button>
+    <view class="secondary-actions" wx:if="{{isReserved && !isSaleOpen}}">
+      <button bindtap="retryNotification">重新开启微信通知</button>
+      <button class="cancel-action" bindtap="cancelReservation">取消预约</button>
+    </view>
+  </view>
+
+  <view class="section-block">
+    <view class="section-title">果园近况</view>
+    <view class="section-subtitle">由管理员维护的实际生长记录。</view>
+    <view class="empty-state" wx:if="{{orchardUpdates.length == 0}}">暂时没有新的果园动态</view>
+    <view class="update-list" wx:else>
+      <view class="update-item" wx:for="{{orchardUpdates}}" wx:key="id" data-index="{{index}}" bindtap="showUpdateDetail">
+        <image wx:if="{{item.mediaUrl}}" class="update-image" src="{{item.mediaUrl}}" mode="aspectFill"></image>
+        <view class="update-copy">
+          <view class="update-head">
+            <text class="update-title">{{item.title}}</text>
+            <text class="update-stage">{{item.stage}}</text>
+          </view>
+          <view class="update-date">{{item.date}}</view>
+          <view class="update-summary">{{item.summary}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="faq-section">
+    <view class="section-title">常见问题</view>
+    <view class="faq-item" wx:for="{{faqItems}}" wx:key="title" data-index="{{index}}" bindtap="toggleFaq">
+      <view class="faq-head">
+        <text>{{item.title}}</text>
+        <text>{{expandedFaqIndex == index ? '−' : '+'}}</text>
+      </view>
+      <view class="faq-content" wx:if="{{expandedFaqIndex == index}}">{{item.content}}</view>
+    </view>
+  </view>
+</view>

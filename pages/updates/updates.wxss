@@ -1,0 +1,42 @@
+.status-header {
+  padding: 28rpx;
+  border-radius: 16rpx;
+  background: #eef6e5;
+}
+
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 22rpx;
+  margin-top: 28rpx;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 180rpx minmax(0, 1fr);
+  gap: 18rpx;
+}
+
+.timeline-date {
+  color: #b83b37;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+.timeline-body {
+  padding: 24rpx;
+  border-radius: 16rpx;
+  background: #fffdf6;
+}
+
+.timeline-title {
+  color: #25331e;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.timeline-content {
+  margin-top: 10rpx;
+  color: #5e6657;
+}

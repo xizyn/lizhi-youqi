@@ -1,0 +1,18 @@
+<view class="page risk-page">
+  <view class="risk-head">
+    <view class="section-title">风险告知</view>
+    <view class="section-subtitle">荔枝是季节性鲜果，采摘、配送和自提安排都会受实际情况影响。</view>
+  </view>
+
+  <view class="risk-list">
+    <view class="risk-item" wx:for="{{riskItems}}" wx:key="*this">
+      <view class="risk-index">{{index + 1}}</view>
+      <view>{{item}}</view>
+    </view>
+  </view>
+
+  <view class="button-stack">
+    <button class="action-btn green-btn" data-url="/pages/picking/picking" bindtap="navigateTo">去自提下单</button>
+    <button class="action-btn plain-btn" data-url="/pages/express/express" bindtap="navigateTo">查看配送说明</button>
+  </view>
+</view>

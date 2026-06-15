@@ -1,0 +1,45 @@
+<view class="page express-page">
+  <view class="page-head">
+    <view class="page-title">快递配送</view>
+    <view class="page-subtitle">顺丰冷运配送，不支持礼盒包装</view>
+  </view>
+
+  <view class="notice-box">
+    <view class="notice-title">运费说明</view>
+    <view class="notice-text">{{listNotice}}</view>
+  </view>
+
+  <view class="product-grid">
+    <view class="product-card {{item.selectedClass}} {{item.disabled ? 'disabled' : ''}}" wx:for="{{products}}" wx:key="id" data-sku="{{item.id}}" bindtap="selectProduct">
+      <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+      <view class="product-body">
+        <view class="selected-mark" wx:if="{{item.selected}}">✓</view>
+        <view class="product-name">{{item.name}}</view>
+        <view class="product-meta">规格：{{item.spec}}</view>
+        <view class="product-meta">品种：{{item.variety}}</view>
+        <view class="mix-notice" wx:if="{{item.mixNotice}}">{{item.mixNotice}}</view>
+        <view class="shipping-block">
+          <view class="shipping-range">参考运费：{{item.referenceShippingText}}</view>
+          <view class="shipping-note">{{item.referenceShippingNote}}</view>
+        </view>
+        <view class="freight-tag sold-tag" wx:if="{{item.statusText}}">{{item.statusText}}</view>
+        <view class="product-bottom">
+          <view class="product-price">{{item.priceText}}</view>
+          <view class="select-pill">{{item.selectText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="transit-note">{{transitNotice}}</view>
+  <view class="bottom-placeholder" wx:if="{{selectedProduct}}"></view>
+
+  <view class="selection-bar" wx:if="{{selectedProduct}}">
+    <view class="selection-summary">
+      <view class="selection-label">已选商品</view>
+      <view class="selection-name">{{selectedProduct.name}}</view>
+      <view class="selection-price">{{selectedProduct.priceText}}</view>
+    </view>
+    <button class="continue-button" bindtap="goRecipientForm">去填写收件信息</button>
+  </view>
+</view>

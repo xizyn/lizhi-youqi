@@ -1,0 +1,282 @@
+.mine-page {
+  padding: 48rpx 30rpx 150rpx;
+  background: #f8f3e9;
+}
+
+.mine-head {
+  padding: 28rpx 0 22rpx;
+}
+
+.mine-title {
+  color: #273323;
+  font-size: 48rpx;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.small-title {
+  margin-top: 8rpx;
+  font-size: 32rpx;
+}
+
+.status-scroll {
+  margin-top: 20rpx;
+  white-space: nowrap;
+}
+
+.status-inner {
+  display: inline-flex;
+  gap: 12rpx;
+  padding-bottom: 4rpx;
+}
+
+.status-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 154rpx;
+  min-height: 118rpx;
+  padding: 18rpx 8rpx;
+  border: 1rpx solid rgba(82, 111, 65, 0.12);
+  border-radius: 16rpx;
+  background: #fffdf7;
+  text-align: center;
+}
+
+.status-card.active {
+  border-color: rgba(79, 125, 70, 0.46);
+  background: #eef6e7;
+  box-shadow: 0 10rpx 24rpx rgba(69, 100, 48, 0.1);
+}
+
+.status-card:active {
+  transform: translateY(1rpx);
+}
+
+.status-card {
+  min-height: 118rpx;
+  padding: 18rpx 8rpx;
+  border: 1rpx solid rgba(82, 111, 65, 0.12);
+  border-radius: 16rpx;
+  background: #fffdf7;
+  text-align: center;
+}
+
+.status-card.active {
+  border-color: rgba(79, 125, 70, 0.46);
+  background: #eef6e7;
+  box-shadow: 0 10rpx 24rpx rgba(69, 100, 48, 0.1);
+}
+
+.status-card:active {
+  transform: translateY(1rpx);
+}
+
+.status-num {
+  color: #8d3d38;
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.status-label {
+  margin-top: 8rpx;
+  color: #66705d;
+  font-size: 20rpx;
+  line-height: 1.35;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 24rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  color: #335f2e;
+  background: #edf6e7;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  margin-top: 28rpx;
+}
+
+.order-card {
+  padding: 24rpx;
+  border: 1rpx solid rgba(82, 111, 65, 0.12);
+  border-radius: 16rpx;
+  background: #fffdf7;
+}
+
+.order-top {
+  display: flex;
+  gap: 18rpx;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.order-no {
+  color: #25331e;
+  font-size: 28rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.order-status {
+  flex: 0 0 auto;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  color: #3f7335;
+  background: #eef6e7;
+  font-size: 21rpx;
+  font-weight: 700;
+}
+
+.status-paid {
+  color: #2f6f3a;
+  background: #e4f5e8;
+}
+
+.status-pending-delivery {
+  color: #b37a00;
+  background: #fff3d6;
+}
+
+.status-picking {
+  color: #7a5d3f;
+  background: #f0e6d6;
+}
+
+.status-shipped {
+  color: #1f5f9f;
+  background: #e4f1ff;
+}
+
+.status-done {
+  color: #4f7d46;
+  background: #eef8ea;
+}
+
+.status-cancelled {
+  color: #737970;
+  background: #eef0ea;
+}
+
+.status-service {
+  color: #c0392b;
+  background: #fdecea;
+}
+
+.status-pending-pay {
+  color: #8d3d38;
+  background: #fff1ec;
+}
+
+.status-default {
+  color: #3f7335;
+  background: #eef6e7;
+}
+
+.order-line {
+  color: #4f5b46;
+  font-size: 24rpx;
+  line-height: 1.65;
+}
+
+.order-main {
+  display: flex;
+  gap: 20rpx;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-top: 18rpx;
+  padding: 20rpx;
+  border-radius: 14rpx;
+  background: #f7f1e7;
+}
+
+.order-product {
+  flex: 1;
+  min-width: 0;
+}
+
+.product-name {
+  color: #25331e;
+  font-size: 30rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.product-meta {
+  margin-top: 8rpx;
+  color: #6f7a65;
+  font-size: 23rpx;
+  line-height: 1.45;
+}
+
+.order-amount {
+  color: #8d3d38;
+  flex: 0 0 auto;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.order-sub {
+  margin-top: 16rpx;
+}
+
+.order-time {
+  margin-top: 8rpx;
+  color: #7a826f;
+  font-size: 22rpx;
+}
+
+.ship-box {
+  margin-top: 16rpx;
+  padding: 18rpx;
+  border-radius: 14rpx;
+  background: #f1f7ea;
+}
+
+.ship-actions {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+
+.ship-btn {
+  flex: 1;
+  margin: 0;
+}
+
+.detail-btn {
+  width: 100%;
+  margin-top: 18rpx;
+}
+
+.bottom-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 34rpx;
+}
+
+.bottom-link {
+  padding: 10rpx 20rpx;
+  color: #5f6a57;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.admin-link {
+  margin-top: 36rpx;
+  color: #9a9f90;
+  font-size: 22rpx;
+  text-align: center;
+}

@@ -1,0 +1,82 @@
+<view class="page profile-page">
+  <view class="profile-head">
+    <view class="profile-title">我的</view>
+  </view>
+
+  <view class="member-card">
+    <view class="member-row">
+      <image class="member-avatar" src="{{member.avatar}}" mode="aspectFill"></image>
+      <view class="member-main">
+        <view class="member-name-row">
+          <view class="member-name">{{member.nickname}}</view>
+          <view class="member-tag admin-tag-{{showAdminEntry}}">{{member.memberTag}}</view>
+        </view>
+        <view class="member-code">微信号：{{member.userCode}}</view>
+      </view>
+    </view>
+    <view class="stats-row">
+      <view class="stat-item">
+        <view class="stat-label">累计消费(元)</view>
+        <view class="stat-value">{{member.totalSpend}}</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-label">累计购买(斤)</view>
+        <view class="stat-value">{{member.totalWeight}}</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-label">当前积分</view>
+        <view class="stat-value">{{member.points}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="orders-card">
+    <view class="orders-card-head">
+      <view>
+        <view class="orders-title">我的订单</view>
+        <view class="orders-desc">查看订单当前进度</view>
+      </view>
+      <view class="orders-all" data-filter="all" bindtap="openOrderFilter">全部订单 ›</view>
+    </view>
+    <view class="order-shortcuts">
+      <view class="order-shortcut" wx:for="{{orderShortcuts}}" wx:key="key" data-filter="{{item.key}}" bindtap="openOrderFilter">
+        <view class="shortcut-count">{{item.count}}</view>
+        <view class="shortcut-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="profile-list reminder-list">
+    <view class="profile-link reminder-link" data-url="{{reminderEntry.url}}" bindtap="handleLinkTap">
+      <view class="entry-icon">{{reminderEntry.icon}}</view>
+      <view class="entry-main">
+        <view class="link-title">{{reminderEntry.text}}</view>
+        <view class="link-desc">{{reminderEntry.desc}}</view>
+      </view>
+      <view class="entry-status status-{{reminderEntry.statusTone}}">{{reminderEntry.statusText}}</view>
+      <view class="link-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="admin-card" wx:if="{{showAdminEntry}}" bindtap="openAdmin">
+    <view class="entry-icon admin-icon">管</view>
+    <view class="entry-main">
+      <view class="link-title">进入管理后台</view>
+      <view class="link-desc">进入农户管理后台</view>
+    </view>
+    <view class="link-arrow">›</view>
+  </view>
+
+  <view class="profile-list">
+    <view class="profile-link" wx:for="{{links}}" wx:key="text" data-url="{{item.url}}" data-type="{{item.type}}" bindtap="handleLinkTap">
+      <view class="entry-icon">{{item.icon}}</view>
+      <view class="entry-main">
+        <view class="link-title">{{item.text}}</view>
+        <view class="link-desc">{{item.desc}}</view>
+      </view>
+      <view class="link-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="profile-footer">遇到问题？随时联系我们</view>
+</view>

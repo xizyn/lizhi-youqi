@@ -1,0 +1,22 @@
+<view class="page updates-page">
+  <view class="status-header">
+    <view class="muted">当前模拟状态</view>
+    <view class="section-title">{{salesStatus.label}}</view>
+    <view class="section-subtitle">{{salesStatus.description}}</view>
+  </view>
+
+  <view class="timeline">
+    <view class="timeline-item" wx:for="{{updates}}" wx:key="id">
+      <view class="timeline-date">{{item.date}}</view>
+      <view class="timeline-body">
+        <view class="timeline-title">{{item.title}}</view>
+        <view class="timeline-content">{{item.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="button-stack">
+    <button class="action-btn primary-btn" data-url="/pages/reminder/reminder" bindtap="navigateTo">预约开售提醒</button>
+    <button class="action-btn plain-btn" data-url="/pages/group-buy/group-buy" bindtap="navigateTo">企业团购登记</button>
+  </view>
+</view>

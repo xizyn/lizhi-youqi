@@ -1,0 +1,897 @@
+<view class="page admin-page" wx:if="{{authorized}}">
+  <view class="admin-custom-nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="admin-custom-nav-inner" style="height: {{navigationBarHeight}}px;">
+      <view class="admin-nav-back" bindtap="goBack" aria-label="返回上一级">‹</view>
+      <view class="admin-nav-title">{{activeTab == 'dashboard' ? '管理后台' : moduleTitle}}</view>
+      <view class="admin-nav-capsule-space" style="width: {{navigationRightInset}}px;"></view>
+    </view>
+  </view>
+
+  <block wx:if="{{activeTab == 'dashboard'}}">
+    <view class="dashboard-hero">
+      <image class="dashboard-hero-image" src="/assets/images/banner-lychee.png" mode="aspectFill"></image>
+      <view class="dashboard-hero-mask"></view>
+      <view class="dashboard-brand">
+        <view class="dashboard-title-row">
+          <view class="dashboard-title">荔枝有期</view>
+          <view class="dashboard-admin-tag">管理员后台</view>
+        </view>
+        <view class="dashboard-security">
+          <text class="security-icon">锁</text>
+          <text>仅白名单账号可见</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="dashboard-section overview-section">
+      <view class="dashboard-section-head">
+        <view class="dashboard-section-title">今日概览</view>
+        <view class="refresh-link" bindtap="refreshData">刷新</view>
+      </view>
+      <view class="overview-grid">
+        <view class="overview-card tone-{{item.tone}}" wx:for="{{dashboardOverview}}" wx:key="label">
+          <view class="overview-label">{{item.label}}</view>
+          <view class="overview-number">{{item.value}}<text class="overview-unit">{{item.unit}}</text></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="sales-card">
+      <view class="sales-copy">
+        <view class="sales-label">今日销售额</view>
+        <view class="sales-amount">¥ {{dashboardSales.amount}}</view>
+        <view class="sales-change">较昨日 <text class="change-{{dashboardSales.changeClass}}">{{dashboardSales.change}}</text></view>
+      </view>
+      <view class="trend-wrap">
+        <view class="trend-bars">
+          <view class="trend-bar bar-1"></view>
+          <view class="trend-bar bar-2"></view>
+          <view class="trend-bar bar-3"></view>
+          <view class="trend-bar bar-4"></view>
+          <view class="trend-bar bar-5"></view>
+          <view class="trend-bar bar-6"></view>
+          <view class="trend-bar bar-7"></view>
+        </view>
+        <view class="trend-time">更新 {{dashboardSales.updatedAt}}</view>
+      </view>
+    </view>
+
+    <view class="dashboard-section quick-section">
+      <view class="dashboard-section-title">快速入口</view>
+      <view class="dashboard-entry-grid">
+        <view class="dashboard-entry-card" wx:for="{{dashboardEntries}}" wx:key="id" data-id="{{item.id}}" bindtap="openDashboardEntry">
+          <view class="dashboard-entry-icon entry-tone-{{item.tone}}">{{item.icon}}</view>
+          <view class="dashboard-entry-copy">
+            <view class="dashboard-entry-title">{{item.title}}</view>
+            <view class="dashboard-entry-desc">{{item.desc}}</view>
+          </view>
+          <view class="dashboard-entry-badge" wx:if="{{item.badge > 0}}">{{item.badge}}</view>
+          <view class="dashboard-entry-arrow">›</view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <scroll-view
+    class="tabs"
+    scroll-x="true"
+    enhanced="true"
+    scroll-with-animation="true"
+    scroll-into-view="admin-tab-{{activeTab}}"
+    show-scrollbar="false"
+    wx:if="{{activeTab != 'dashboard'}}"
+  >
+    <view class="tabs-inner">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="id"
+        id="admin-tab-{{item.id}}"
+        class="tab-item {{activeTab == item.id ? 'active' : ''}}"
+        data-tab="{{item.id}}"
+        bindtap="switchTab"
+      >{{item.text}}</view>
+    </view>
+  </scroll-view>
+
+  <block wx:if="{{activeTab == 'current'}}">
+    <view class="admin-workbench-hero">
+      <view class="admin-workbench-eyebrow">今日处理进度</view>
+      <view class="admin-workbench-title">还有 {{currentWorkbench.totalActionCount}} 单需要处理</view>
+      <view class="admin-workbench-desc">先处理待付款与待确认订单，再安排采摘、配送和自提。</view>
+      <view class="admin-kpi-grid">
+        <view
+          class="admin-kpi-card tone-{{item.tone}}"
+          wx:for="{{currentWorkbench.overview}}"
+          wx:key="key"
+          data-filter="{{item.key}}"
+          bindtap="switchOrderQuickAction"
+        >
+          <view class="admin-kpi-value">{{item.value}}</view>
+          <view class="admin-kpi-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">待办操作</view>
+          <view class="admin-section-desc">按处理目标进入对应订单列表</view>
+        </view>
+      </view>
+      <view class="admin-action-grid">
+        <view
+          class="admin-action-card"
+          wx:for="{{currentWorkbench.actions}}"
+          wx:key="key"
+          data-filter="{{item.key}}"
+          bindtap="switchOrderQuickAction"
+        >
+          <view class="admin-action-count">{{item.count}}</view>
+          <view class="admin-action-title">{{item.title}}</view>
+          <view class="admin-action-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section" id="current-order-list">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">当前订单</view>
+          <view class="admin-section-desc">只显示仍需跟进的订单</view>
+        </view>
+        <view class="admin-section-count">{{orders.length}} 单</view>
+      </view>
+      <view class="admin-filter-row">
+      <view
+        wx:for="{{orderStatusFilters}}"
+        wx:key="key"
+        class="admin-filter-chip {{activeOrderFilter == item.key ? 'active' : ''}}"
+        data-filter="{{item.key}}"
+        bindtap="switchOrderFilter"
+      >{{item.label}}</view>
+      </view>
+
+      <view wx:if="{{orders.length == 0}}" class="admin-empty-state">当前筛选下暂无订单</view>
+      <view wx:else class="admin-order-list">
+        <view class="admin-order-card" wx:for="{{orders}}" wx:key="id">
+          <view class="admin-order-head">
+            <view>
+              <view class="admin-order-no">{{item.orderNoText}}</view>
+              <view class="admin-order-time">{{item.createdAt}}</view>
+            </view>
+            <view class="status-pill">{{item.orderStatus}}</view>
+          </view>
+          <view class="admin-order-product">
+            <view class="admin-order-main">
+              <view class="admin-order-name">{{item.productName}}</view>
+              <view class="admin-order-meta">{{item.specText}} · {{item.quantityText}} · {{item.deliverySummary}}</view>
+            </view>
+            <view class="admin-order-amount">{{item.amountText}}</view>
+          </view>
+          <view class="admin-order-contact">{{item.recipientNameText}} · {{item.phoneText}}</view>
+          <view class="admin-order-address">{{item.addressText}}</view>
+          <view class="admin-order-actions">
+            <button class="admin-order-btn" data-id="{{item.id}}" bindtap="toggleOrderDetail">{{item.detailButtonText}}</button>
+            <button class="admin-order-btn" wx:if="{{item.isPendingPayment}}" data-id="{{item.id}}" bindtap="remindPayment">提醒付款</button>
+            <button class="admin-order-btn primary" wx:if="{{item.orderStatus == '已提交' || item.orderStatus == '已支付'}}" data-id="{{item.id}}" bindtap="confirmAdminOrder">确认订单</button>
+            <button class="admin-order-btn" wx:if="{{item.isPickup && item.orderStatus == '待发货/待自提'}}" data-id="{{item.id}}" bindtap="confirmPickupOrder">确认自提</button>
+            <button class="admin-order-btn" wx:if="{{item.isExpress && item.orderStatus != '待付款'}}" data-id="{{item.id}}" bindtap="inputTrackingNo">填写顺丰单号</button>
+            <button class="admin-order-btn primary" wx:if="{{item.isExpress && (item.orderStatus == '待打包' || item.orderStatus == '待发货/待自提')}}" data-id="{{item.id}}" bindtap="markExpressShipped">标记已送出</button>
+            <button class="admin-order-btn primary" wx:if="{{item.isNearby && (item.orderStatus == '待打包' || item.orderStatus == '待发货/待自提')}}" data-id="{{item.id}}" bindtap="markNearbyDelivered">标记已送出</button>
+            <button class="admin-order-btn danger" wx:if="{{item.isPendingPayment}}" data-id="{{item.id}}" bindtap="closePendingOrder">取消订单</button>
+            <button class="admin-order-btn" wx:if="{{item.isAfterSale}}" data-id="{{item.id}}" bindtap="markAfterSaleProcessing">查看售后</button>
+          </view>
+
+          <view class="detail-panel" wx:if="{{item.isExpanded}}">
+            <view class="field compact-field">
+              <view class="field-label">订单状态</view>
+              <picker mode="selector" range="{{orderStatuses}}" value="{{item.statusIndex}}" data-index="{{index}}" data-field="orderStatus" bindchange="handleOrderPicker">
+                <view class="picker-value">{{item.orderStatus}}</view>
+              </picker>
+            </view>
+            <view class="field compact-field" wx:if="{{item.isExpress}}">
+              <view class="field-label">顺丰单号</view>
+              <input class="field-input" value="{{item.trackingNo}}" data-index="{{index}}" data-field="trackingNo" bindinput="handleOrderInput" placeholder="发货后填写" />
+            </view>
+            <view class="field compact-field">
+              <view class="field-label">客服备注</view>
+              <textarea class="field-textarea small-textarea" value="{{item.serviceNote}}" data-index="{{index}}" data-field="serviceNote" bindinput="handleOrderInput" placeholder="仅后台查看" />
+            </view>
+            <button class="mini-btn plain-btn save-order-btn" data-index="{{index}}" bindtap="saveOrder">保存订单</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{activeTab == 'history'}}">
+    <view class="admin-workbench-hero history-hero">
+      <view class="admin-workbench-eyebrow">查询与复盘</view>
+      <view class="admin-workbench-title">历史订单中心</view>
+      <view class="admin-workbench-desc">按订单号、手机号或客户姓名快速查找已结束订单。</view>
+      <view class="admin-kpi-grid history-kpi-grid">
+        <view class="admin-kpi-card tone-{{item.tone}}" wx:for="{{historyOverview}}" wx:key="key">
+          <view class="admin-kpi-value">{{item.value}}</view>
+          <view class="admin-kpi-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-title">订单查询</view>
+      <view class="admin-search-row">
+        <input class="admin-search-input" value="{{historyKeyword}}" bindinput="handleHistoryKeywordInput" placeholder="订单号 / 手机号 / 客户姓名" />
+        <button class="admin-search-btn" bindtap="applyHistoryFilters">查询</button>
+      </view>
+      <view class="admin-query-row">
+        <picker mode="selector" range="{{historyStatusOptions}}" value="{{historyStatusIndex}}" bindchange="handleHistoryStatusChange">
+          <view class="admin-query-picker">{{historyStatusOptions[historyStatusIndex]}}⌄</view>
+        </picker>
+        <view class="admin-query-clear" bindtap="clearHistoryFilters">清除条件</view>
+      </view>
+      <view class="history-date-grid">
+        <picker mode="date" value="{{historyStartDate}}" data-field="historyStartDate" bindchange="handleHistoryDateChange">
+          <view class="history-date-picker">{{historyDateFilterActive ? historyStartDate : '开始日期'}}</view>
+        </picker>
+        <picker mode="date" value="{{historyEndDate}}" data-field="historyEndDate" bindchange="handleHistoryDateChange">
+          <view class="history-date-picker">{{historyDateFilterActive ? historyEndDate : '结束日期'}}</view>
+        </picker>
+      </view>
+      <view class="history-date-status" wx:if="{{historyDateFilterActive}}">
+        <text>统计日期：{{historyStartDate}} 至 {{historyEndDate}}</text>
+        <text class="history-date-clear" bindtap="clearHistoryDateFilter">清除日期</text>
+      </view>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">查询结果</view>
+          <view class="admin-section-desc">历史订单只保留查看入口</view>
+        </view>
+        <view class="admin-section-count">{{orders.length}} 单</view>
+      </view>
+      <view wx:if="{{orders.length == 0}}" class="admin-empty-state">没有符合条件的历史订单</view>
+      <view wx:else class="admin-order-list">
+        <view class="admin-order-card history-order-card" wx:for="{{orders}}" wx:key="id">
+          <view class="admin-order-head">
+            <view>
+              <view class="admin-order-no">{{item.orderNoText}}</view>
+              <view class="admin-order-time">{{item.createdAt}}</view>
+            </view>
+            <view class="status-pill history-status">{{item.orderStatus}}</view>
+          </view>
+          <view class="admin-order-product">
+            <view class="admin-order-main">
+              <view class="admin-order-name">{{item.productName}}</view>
+              <view class="admin-order-meta">{{item.specText}} · {{item.quantityText}}</view>
+            </view>
+            <view class="admin-order-amount">{{item.amountText}}</view>
+          </view>
+          <view class="admin-order-contact">{{item.recipientNameText}} · {{item.phoneText}} · {{item.deliverySummary}}</view>
+          <button class="admin-order-btn history-detail-btn" data-id="{{item.id}}" bindtap="toggleOrderDetail">{{item.detailButtonText}}</button>
+          <view class="detail-panel history-detail-panel" wx:if="{{item.isExpanded}}">
+            <view class="record-line">地址/自提点：{{item.addressText}}</view>
+            <view class="record-line">完成状态：{{item.orderStatus}}</view>
+            <view class="record-line">客服备注：{{item.serviceNote || '无'}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{activeTab == 'summary'}}">
+    <view class="summary-section export-section">
+      <view class="summary-head">
+        <view>
+          <view class="section-title">导出中心</view>
+          <view class="section-subtitle">当前范围：{{reportRangeText}}。先在小程序内查看报表，需要时再复制或导出 CSV。</view>
+        </view>
+      </view>
+      <view class="report-filter-panel">
+        <view class="field compact-field">
+          <view class="field-label">导出日期</view>
+          <picker mode="selector" range="{{reportRangeOptions}}" value="{{reportRangeIndex}}" bindchange="handleReportRangeChange">
+            <view class="picker-value">{{reportRangeOptions[reportRangeIndex]}}</view>
+          </picker>
+        </view>
+        <view class="grid-fields" wx:if="{{reportRangeValues[reportRangeIndex] == 'custom'}}">
+          <view class="field compact-field">
+            <view class="field-label">开始日期</view>
+            <picker mode="date" value="{{customStartDate}}" data-field="customStartDate" bindchange="handleReportDateChange">
+              <view class="picker-value">{{customStartDate}}</view>
+            </picker>
+          </view>
+          <view class="field compact-field">
+            <view class="field-label">结束日期</view>
+            <picker mode="date" value="{{customEndDate}}" data-field="customEndDate" bindchange="handleReportDateChange">
+              <view class="picker-value">{{customEndDate}}</view>
+            </picker>
+          </view>
+        </view>
+      </view>
+      <view class="summary-grid">
+        <view class="summary-item export-summary-item" wx:for="{{exportSummaryRows}}" wx:key="label">
+          <view class="summary-value">{{item.value}}</view>
+          <view class="summary-label">{{item.label}}</view>
+        </view>
+      </view>
+      <view class="export-actions">
+        <button class="mini-btn export-btn" bindtap="generateOrderDetailCSV">生成订单明细表</button>
+        <button class="mini-btn export-btn" bindtap="generateHarvestSummaryCSV">生成采摘汇总表</button>
+        <button class="mini-btn export-btn" bindtap="generateDeliveryCSV">生成发货配送表</button>
+        <button class="mini-btn export-btn" bindtap="generateFinanceCSV">生成财务汇总表</button>
+      </view>
+    </view>
+
+    <view class="summary-section">
+      <view class="summary-head">
+        <view>
+          <view class="section-title">今日备货汇总</view>
+          <view class="section-subtitle">按今天下单时间统计，供采摘、打包和配送前核对。</view>
+        </view>
+      </view>
+      <view class="summary-grid">
+        <view class="summary-item stock-item" wx:for="{{todayStockRows}}" wx:key="label">
+          <view class="summary-value">{{item.value}}</view>
+          <view class="summary-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{activeTab == 'reminders'}}">
+    <view class="admin-workbench-hero reminder-hero">
+      <view class="admin-workbench-eyebrow">{{reminderForm.reservationYear}} 年销售季</view>
+      <view class="admin-workbench-title">当前：{{reminderWorkbench.businessStage}}</view>
+      <view class="admin-workbench-desc">生长阶段 {{reminderForm.currentStage}} · 预计开售 {{reminderForm.expectedSaleDate}}</view>
+      <view class="season-stage-track">
+        <view class="season-stage-item {{item.active ? 'active' : ''}} {{item.done ? 'done' : ''}}" wx:for="{{reminderWorkbench.stageLabels}}" wx:key="label">
+          <view class="season-stage-dot"></view>
+          <view class="season-stage-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">预约提醒数据</view>
+          <view class="admin-section-desc">本机演示记录，不代表全部客户</view>
+        </view>
+      </view>
+      <view class="admin-kpi-grid history-kpi-grid">
+        <view class="admin-kpi-card" wx:for="{{reminderWorkbench.metrics}}" wx:key="label">
+          <view class="admin-kpi-value">{{item.value}}<text class="admin-kpi-unit">{{item.unit}}</text></view>
+          <view class="admin-kpi-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-title">阶段操作</view>
+      <view class="admin-action-grid">
+        <view class="admin-action-card" data-panel="settings" bindtap="openReminderPanel">
+          <view class="admin-action-title">设置开售时间</view>
+          <view class="admin-action-desc">维护阶段、成熟和开售日期</view>
+        </view>
+        <view class="admin-action-card" bindtap="enableReminderReservation">
+          <view class="admin-action-title">开启预约提醒</view>
+          <view class="admin-action-desc">{{reminderForm.reservationOpen ? '预约入口已开启' : '允许用户登记本季提醒'}}</view>
+        </view>
+        <view class="admin-action-card" bindtap="showReminderSendInfo">
+          <view class="admin-action-title">发送开售提醒</view>
+          <view class="admin-action-desc">需接入云函数后正式启用</view>
+        </view>
+        <view class="admin-action-card" data-panel="orchard" bindtap="openReminderPanel">
+          <view class="admin-action-title">发布果园动态</view>
+          <view class="admin-action-desc">更新真实生长情况</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{reminderEditPanel == 'settings'}}">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">开售配置</view>
+          <view class="admin-section-desc">修改后同步到用户端开售提醒页</view>
+        </view>
+      </view>
+      <view class="grid-fields">
+        <view class="field">
+          <view class="field-label">预约年份</view>
+          <input class="field-input" type="number" value="{{reminderForm.reservationYear}}" data-field="reservationYear" bindinput="handleReminderInput" />
+        </view>
+        <view class="field">
+          <view class="field-label">当前生长阶段</view>
+          <picker mode="selector" range="{{reminderStageOptions}}" value="{{reminderStageIndex}}" bindchange="handleReminderStageChange">
+            <view class="picker-value">{{reminderForm.currentStage}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="switch-line reminder-open-switch">
+        <view>
+          <view class="field-label">开放预约</view>
+          <view class="section-subtitle">关闭后已登记记录仍保留</view>
+        </view>
+        <switch checked="{{reminderForm.reservationOpen}}" bindchange="handleReminderOpenChange" />
+      </view>
+      <view class="field">
+        <view class="field-label">预计成熟时间</view>
+        <input class="field-input" value="{{reminderForm.expectedMaturityDate}}" data-field="expectedMaturityDate" bindinput="handleReminderInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">预计开售时间</view>
+        <input class="field-input" value="{{reminderForm.expectedSaleDate}}" data-field="expectedSaleDate" bindinput="handleReminderInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">情况说明</view>
+        <textarea class="field-textarea" maxlength="240" value="{{reminderForm.situationNote}}" data-field="situationNote" bindinput="handleReminderInput" />
+      </view>
+      <button class="action-btn green-btn" bindtap="saveReminderSettings">保存开售配置</button>
+      <button class="admin-secondary-action" bindtap="markReminderSoldOut">标记本季售罄</button>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{reminderEditPanel == 'orchard'}}">
+      <view class="admin-section-title">发布果园近况</view>
+      <view class="field">
+        <view class="field-label">标题</view>
+        <input class="field-input" value="{{orchardUpdateForm.title}}" data-field="title" bindinput="handleOrchardUpdateInput" placeholder="例如 桂味进入膨大期" />
+      </view>
+      <view class="grid-fields">
+        <view class="field">
+          <view class="field-label">日期</view>
+          <input class="field-input" value="{{orchardUpdateForm.date}}" data-field="date" bindinput="handleOrchardUpdateInput" placeholder="YYYY-MM-DD" />
+        </view>
+        <view class="field">
+          <view class="field-label">阶段</view>
+          <picker mode="selector" range="{{reminderStageOptions}}" bindchange="handleOrchardUpdateStage">
+            <view class="picker-value">{{orchardUpdateForm.stage}}</view>
+          </picker>
+        </view>
+      </view>
+      <view class="field">
+        <view class="field-label">图片路径</view>
+        <input class="field-input" value="{{orchardUpdateForm.mediaUrl}}" data-field="mediaUrl" bindinput="handleOrchardUpdateInput" placeholder="/assets/images/..." />
+      </view>
+      <view class="field">
+        <view class="field-label">简短说明</view>
+        <textarea class="field-textarea small-textarea" maxlength="200" value="{{orchardUpdateForm.summary}}" data-field="summary" bindinput="handleOrchardUpdateInput" />
+      </view>
+      <button class="action-btn green-btn" bindtap="publishOrchardUpdate">发布动态</button>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">最近动态</view>
+          <view class="admin-section-desc">向用户展示真实果园进度</view>
+        </view>
+        <view class="admin-section-count">{{reminderForm.orchardUpdates.length}} 条</view>
+      </view>
+      <view class="admin-empty-state" wx:if="{{!reminderWorkbench.latestUpdate}}">尚未发布果园动态</view>
+      <view class="orchard-update-admin-card" wx:else>
+        <view class="orchard-update-copy">
+          <view class="record-name">{{reminderWorkbench.latestUpdate.title}}</view>
+          <view class="record-time">{{reminderWorkbench.latestUpdate.date}} · {{reminderWorkbench.latestUpdate.stage}}</view>
+          <view class="record-line">{{reminderWorkbench.latestUpdate.summary}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{activeTab == 'points'}}">
+    <view class="admin-workbench-hero points-hero">
+      <view class="admin-workbench-eyebrow">积分运营</view>
+      <view class="admin-workbench-title">积分系统运行正常</view>
+      <view class="admin-workbench-desc">当前为本机演示账户，关键调整均保留原因和时间记录。</view>
+      <view class="admin-kpi-grid history-kpi-grid">
+        <view class="admin-kpi-card tone-{{item.tone}}" wx:for="{{pointWorkbench.overview}}" wx:key="key">
+          <view class="admin-kpi-value">{{item.value}}</view>
+          <view class="admin-kpi-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-title">常用操作</view>
+      <view class="admin-action-grid">
+        <view class="admin-action-card" data-panel="adjust" bindtap="openPointPanel">
+          <view class="admin-action-title">手动增减积分</view>
+          <view class="admin-action-desc">奖励反馈或人工修正</view>
+        </view>
+        <view class="admin-action-card" data-panel="rules" bindtap="openPointPanel">
+          <view class="admin-action-title">查看积分规则</view>
+          <view class="admin-action-desc">抵扣比例与有效期</view>
+        </view>
+        <view class="admin-action-card" data-panel="records" bindtap="openPointPanel">
+          <view class="admin-action-title">积分流水</view>
+          <view class="admin-action-desc">查看最近发放与扣减</view>
+        </view>
+        <view class="admin-action-card" bindtap="showPointUserInfo">
+          <view class="admin-action-title">用户积分查询</view>
+          <view class="admin-action-desc">正式版按 OpenID 查询</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{pointEditPanel == 'adjust'}}">
+      <view class="admin-section-title">手动调整积分</view>
+      <view class="admin-section-desc">必须填写调整原因，避免无记录修改</view>
+      <view class="grid-fields">
+        <view class="field">
+          <view class="field-label">调整类型</view>
+          <picker mode="selector" range="{{pointChangeTypes}}" value="{{pointChangeTypeIndex}}" bindchange="handlePointTypeChange">
+            <view class="picker-value">{{pointForm.changeType}}</view>
+          </picker>
+        </view>
+        <view class="field">
+          <view class="field-label">积分数量</view>
+          <input class="field-input" type="number" value="{{pointForm.points}}" data-field="points" bindinput="handlePointInput" placeholder="例如 20" />
+        </view>
+      </view>
+      <view class="field">
+        <view class="field-label">调整原因</view>
+        <textarea class="field-textarea small-textarea" maxlength="160" value="{{pointForm.reason}}" data-field="reason" bindinput="handlePointInput" placeholder="例如 有效评价/反馈奖励20积分" />
+      </view>
+      <button class="action-btn green-btn" bindtap="submitPointAdjustment">保存积分调整</button>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{pointEditPanel == 'rules'}}">
+      <view class="admin-section-title">积分规则</view>
+      <view class="admin-section-desc">规则只做展示，本次不改计算逻辑</view>
+      <view class="rule-line" wx:for="{{pointSummary.rules}}" wx:key="*this">{{item}}</view>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{pointEditPanel == 'records'}}">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">最近积分流水</view>
+          <view class="admin-section-desc">按时间倒序显示本机记录</view>
+        </view>
+      </view>
+      <view class="admin-empty-state" wx:if="{{pointSummary.records.length == 0}}">暂无积分变动记录</view>
+      <view class="record-card point-record-card" wx:for="{{pointSummary.records}}" wx:key="id">
+        <view class="record-top">
+          <view>
+            <view class="record-name">{{item.title}}</view>
+            <view class="record-time">{{item.time}}</view>
+          </view>
+          <view class="point-change {{item.points > 0 ? 'plus' : 'minus'}}">{{item.valueText}}</view>
+        </view>
+        <view class="record-line">原因：{{item.reason}}</view>
+        <view class="record-line">有效期：{{item.expireText}}</view>
+        <view class="record-line" wx:if="{{item.orderNo}}">关联订单：{{item.orderNo}}</view>
+      </view>
+    </view>
+
+    <view class="admin-business-section point-rule-overview">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">当前规则摘要</view>
+          <view class="admin-section-desc">100 积分 = 1 元，每单最多抵扣商品金额的 5%</view>
+        </view>
+        <view class="admin-section-count">12个月</view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{activeTab == 'products'}}">
+    <view class="product-workbench">
+      <view class="product-workbench-head">
+        <view>
+          <view class="product-workbench-title">商品工作台</view>
+          <view class="product-workbench-subtitle">先处理异常，再维护商品价格与销售状态</view>
+        </view>
+        <button class="product-refresh-btn" bindtap="refreshProductWorkbench">刷新</button>
+      </view>
+      <view class="product-admin-note">仅管理员可编辑商品、价格与库存状态</view>
+      <view class="product-stat-grid">
+        <view class="product-stat-card tone-{{item.tone}}" wx:for="{{productStats}}" wx:key="key">
+          <view class="product-stat-value">{{item.value}}</view>
+          <view class="product-stat-label">{{item.label}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="product-section" wx:if="{{productIssues.length}}">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">待处理事项</view>
+          <view class="product-section-desc">优先处理会影响正常销售的问题</view>
+        </view>
+        <view class="product-issue-total">{{productIssues.length}} 项</view>
+      </view>
+      <view
+        class="product-issue-row"
+        wx:for="{{productIssues}}"
+        wx:key="key"
+        data-panel="{{item.panel}}"
+        bindtap="openProductPanel"
+      >
+        <view class="product-issue-count">{{item.count}}</view>
+        <view class="product-issue-copy">
+          <view class="product-issue-title">{{item.title}}</view>
+          <view class="product-issue-desc">{{item.desc}}</view>
+        </view>
+        <view class="product-row-arrow">›</view>
+      </view>
+    </view>
+
+    <view class="product-section product-healthy" wx:else>
+      <view class="product-healthy-title">当前商品状态正常</view>
+      <view class="product-section-desc">已上架商品均已设置价格，暂无售罄待补事项。</view>
+    </view>
+
+    <view class="product-section" id="product-preview-panel">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">商品预览</view>
+          <view class="product-section-desc">快速查看用户端商品价格与销售状态</view>
+        </view>
+        <view class="product-link" bindtap="toggleProductPreview">{{productPreviewExpanded ? '收起' : '查看全部'}}</view>
+      </view>
+      <view class="product-preview-list">
+        <block wx:for="{{productPreviewRows}}" wx:key="id">
+          <view class="product-preview-row" wx:if="{{productPreviewExpanded || index < 3}}">
+            <image class="product-preview-image" src="{{item.image}}" mode="aspectFill"></image>
+            <view class="product-preview-copy">
+              <view class="product-preview-name">{{item.name}}</view>
+              <view class="product-preview-meta">{{item.variety}} · {{item.spec}}</view>
+            </view>
+            <view class="product-preview-side">
+              <view class="product-preview-price {{item.hasPrice ? '' : 'missing'}}">{{item.priceText}}</view>
+              <view class="product-status-tag status-{{item.statusTone}}">{{item.statusText}}</view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <view class="product-section">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">快捷管理</view>
+          <view class="product-section-desc">进入对应区域完成配置</view>
+        </view>
+      </view>
+      <view class="product-tool-grid">
+        <view class="product-tool-card" data-panel="preview" bindtap="openProductPanel">
+          <view class="product-tool-title">商品管理</view>
+          <view class="product-tool-desc">查看全部商品</view>
+        </view>
+        <view class="product-tool-card" data-panel="status" bindtap="openProductPanel">
+          <view class="product-tool-title">库存状态</view>
+          <view class="product-tool-desc">上架与售罄控制</view>
+        </view>
+        <view class="product-tool-card" data-panel="price" bindtap="openProductPanel">
+          <view class="product-tool-title">价格规格</view>
+          <view class="product-tool-desc">维护当前售价</view>
+        </view>
+        <view class="product-tool-card" bindtap="showProductCategoryInfo">
+          <view class="product-tool-title">分类概览</view>
+          <view class="product-tool-desc">固定 {{productCategoryCount}} 类 SKU</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="product-section" id="product-price-panel">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">价格与规格</view>
+          <view class="product-section-desc">价格调整后保存，用户端读取同一份本地配置</view>
+        </view>
+      </view>
+      <view class="grid-fields">
+        <view class="field" wx:for="{{priceRows}}" wx:key="key">
+          <view class="field-label">{{item.label}}</view>
+          <input class="field-input" type="digit" value="{{item.value}}" data-index="{{index}}" bindinput="handlePriceInput" placeholder="0" />
+        </view>
+      </view>
+    </view>
+
+    <view class="product-section" id="product-status-panel">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">库存与销售状态</view>
+          <view class="product-section-desc">当前未接入库存台账，以售罄开关作为补货提醒</view>
+        </view>
+      </view>
+      <view class="sku-status-list">
+        <view class="sku-status-card" wx:for="{{skuStatusRows}}" wx:key="id">
+          <image class="sku-status-image" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="sku-status-copy">
+            <view class="record-name">{{item.name}}</view>
+            <view class="record-time">{{item.spec}} · {{item.priceText}}</view>
+          </view>
+          <view class="sku-switches">
+            <view class="switch-line">
+              <text>上架</text>
+              <switch checked="{{item.isListed}}" data-index="{{index}}" data-field="isListed" bindchange="handleSkuStatusSwitch" />
+            </view>
+            <view class="switch-line">
+              <text>售罄</text>
+              <switch checked="{{item.isSoldOut}}" data-index="{{index}}" data-field="isSoldOut" bindchange="handleSkuStatusSwitch" />
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="product-section">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">销售总状态</view>
+          <view class="product-section-desc">控制首页和下单页显示的当前销售阶段</view>
+        </view>
+      </view>
+      <picker mode="selector" range="{{salesStatusLabels}}" value="{{salesStatusIndex}}" bindchange="handleStatusChange">
+        <view class="picker-value">{{salesStatusLabels[salesStatusIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="product-section">
+      <view class="product-section-head product-collapsible-head" bindtap="toggleProductAdvanced">
+        <view>
+          <view class="product-section-title">其他后台配置</view>
+          <view class="product-section-desc">权限、公告和自提信息等低频设置</view>
+        </view>
+        <view class="product-collapse-arrow">{{productAdvancedExpanded ? '收起' : '展开'}}</view>
+      </view>
+      <view wx:if="{{productAdvancedExpanded}}">
+      <view class="field">
+        <view class="field-label">后台密码</view>
+        <input class="field-input" value="{{configForm.adminPassword}}" data-field="adminPassword" bindinput="handleTopInput" placeholder="开发阶段模拟密码" />
+      </view>
+      <view class="field">
+        <view class="field-label">开发模式管理员入口</view>
+        <input class="field-input" value="{{configForm.isAdminMock}}" data-field="isAdminMock" bindinput="handleTopInput" placeholder="true 才显示我的页后台入口" />
+      </view>
+      <view class="field">
+        <view class="field-label">当前 mock openid</view>
+        <input class="field-input" value="{{configForm.mockOpenid}}" data-field="mockOpenid" bindinput="handleTopInput" placeholder="开发阶段模拟用户 openid" />
+      </view>
+      <view class="field">
+        <view class="field-label">管理员 openid 白名单</view>
+        <textarea class="field-textarea small-textarea" maxlength="240" value="{{configForm.adminOpenidWhitelist}}" data-field="adminOpenidWhitelist" bindinput="handleTopInput" placeholder="一行一个 openid，正式上线改为服务端校验" />
+      </view>
+      <view class="field">
+        <view class="field-label">后台公告</view>
+        <textarea class="field-textarea" maxlength="240" value="{{configForm.announcement}}" data-field="announcement" bindinput="handleTopInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">当前采摘状态</view>
+        <input class="field-input" value="{{configForm.harvestStatus}}" data-field="harvestStatus" bindinput="handleTopInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">自提地址</view>
+        <textarea class="field-textarea small-textarea" maxlength="160" value="{{configForm.pickupAddress}}" data-field="pickupAddress" bindinput="handleTopInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">自提时间</view>
+        <input class="field-input" value="{{configForm.pickupTime}}" data-field="pickupTime" bindinput="handleTopInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">高德地图截图路径</view>
+        <input class="field-input" value="{{configForm.pickupMapImage}}" data-field="pickupMapImage" bindinput="handleTopInput" placeholder="/assets/images/pickup-map.png" />
+      </view>
+      </view>
+    </view>
+
+    <view class="product-section">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">最近操作</view>
+          <view class="product-section-desc">本机记录最近 5 次商品配置保存</view>
+        </view>
+      </view>
+      <view class="product-log-empty" wx:if="{{productOperationLogs.length == 0}}">保存商品设置后，将在这里显示操作记录。</view>
+      <view class="product-log-row" wx:for="{{productOperationLogs}}" wx:key="id">
+        <view class="product-log-dot"></view>
+        <view class="product-log-copy">
+          <view class="product-log-text">{{item.text}}</view>
+          <view class="product-log-time">{{item.time}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="button-stack">
+      <button class="action-btn green-btn product-save-btn" bindtap="saveConfigOnly">保存商品设置</button>
+    </view>
+  </block>
+
+  <block wx:elif="{{activeTab == 'delivery'}}">
+    <view class="admin-workbench-hero delivery-hero">
+      <view class="admin-workbench-eyebrow">配送规则中心</view>
+      <view class="admin-workbench-title">{{deliveryWorkbench.enabledCount}} 种配送方式已启用</view>
+      <view class="admin-workbench-desc" wx:if="{{deliveryWorkbench.incompleteCount > 0}}">还有 {{deliveryWorkbench.incompleteCount}} 项基础信息需要补充。</view>
+      <view class="admin-workbench-desc" wx:else>自提、附近送和顺丰快递配置完整。</view>
+    </view>
+
+    <view class="admin-business-section">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">配送方式</view>
+          <view class="admin-section-desc">展开卡片即可修改对应规则</view>
+        </view>
+      </view>
+      <view class="delivery-method-card" wx:for="{{deliveryWorkbench.methods}}" wx:key="key">
+        <view class="delivery-method-head">
+          <view>
+            <view class="delivery-method-title">{{item.title}}</view>
+            <view class="delivery-method-status">{{item.status}}</view>
+          </view>
+          <button class="delivery-edit-btn" data-panel="{{item.key}}" bindtap="openDeliveryPanel">{{deliveryEditPanel == item.key ? '收起' : '编辑'}}</button>
+        </view>
+        <view class="delivery-method-line">{{item.line1}}</view>
+        <view class="delivery-method-line muted">{{item.line2}}</view>
+      </view>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{deliveryEditPanel == 'pickup'}}">
+      <view class="section-title">自提时段</view>
+      <view class="field">
+        <view class="field-label">自提地址</view>
+        <input class="field-input" value="{{configForm.pickupAddress}}" data-field="pickupAddress" bindinput="handleTopInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">自提说明</view>
+        <input class="field-input" value="{{configForm.pickupTime}}" data-field="pickupTime" bindinput="handleTopInput" />
+      </view>
+      <view class="slot-row" wx:for="{{pickupTimeSlotRows}}" wx:key="value">
+        <input class="field-input slot-input" value="{{item.value}}" data-index="{{index}}" bindinput="handlePickupSlotInput" placeholder="例如 9:00-11:00" />
+        <button class="mini-btn plain-btn slot-remove" data-index="{{index}}" bindtap="removePickupSlot">删除</button>
+      </view>
+      <button class="mini-btn plain-btn" bindtap="addPickupSlot">新增自提时段</button>
+      <button class="action-btn green-btn" bindtap="saveConfigOnly">保存自提设置</button>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{deliveryEditPanel == 'nearby'}}">
+      <view class="section-title">附近送设置</view>
+      <view class="field">
+        <view class="field-label">支持区域</view>
+        <textarea class="field-textarea small-textarea" value="{{nearbyAreasText}}" bindinput="handleNearbyAreasInput" placeholder="多个区域用顿号或逗号分隔" />
+      </view>
+      <view class="field">
+        <view class="field-label">配送费</view>
+        <input class="field-input" type="digit" value="{{configForm.nearbyDelivery.deliveryFee}}" data-field="nearbyDelivery.deliveryFee" bindinput="handleDeliveryConfigInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">配送范围说明</view>
+        <textarea class="field-textarea small-textarea" value="{{configForm.nearbyDelivery.scopeNote}}" data-field="nearbyDelivery.scopeNote" bindinput="handleDeliveryConfigInput" />
+      </view>
+      <button class="action-btn green-btn" bindtap="saveConfigOnly">保存附近送设置</button>
+    </view>
+
+    <view class="admin-business-section" wx:if="{{deliveryEditPanel == 'express'}}">
+      <view class="section-title">顺丰快递设置</view>
+      <view class="section-subtitle">5斤装按4kg预估，10斤装按6kg预估，实际以顺丰结算为准。</view>
+      <view class="grid-fields">
+        <view class="field" wx:for="{{shippingFeeRows}}" wx:key="key">
+          <view class="field-label">{{item.label}}</view>
+          <input class="field-input" type="digit" value="{{item.value}}" data-index="{{index}}" bindinput="handleShippingFeeInput" placeholder="0" />
+        </view>
+      </view>
+      <view class="field">
+        <view class="field-label">冷运说明</view>
+        <textarea class="field-textarea small-textarea" value="{{configForm.expressDelivery.coldChainSummary}}" data-field="expressDelivery.coldChainSummary" bindinput="handleDeliveryConfigInput" />
+      </view>
+      <view class="field">
+        <view class="field-label">时效说明</view>
+        <textarea class="field-textarea small-textarea" value="{{configForm.expressDelivery.transitNotice}}" data-field="expressDelivery.transitNotice" bindinput="handleDeliveryConfigInput" />
+      </view>
+      <button class="action-btn green-btn" bindtap="saveConfigOnly">保存快递设置</button>
+    </view>
+
+    <view class="admin-business-section delivery-log-entry">
+      <view class="admin-section-head">
+        <view>
+          <view class="admin-section-title">操作记录</view>
+          <view class="admin-section-desc">配送规则保存后记录在本机配置中</view>
+        </view>
+        <view class="admin-section-count">查看说明</view>
+      </view>
+    </view>
+  </block>
+</view>

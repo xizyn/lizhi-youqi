@@ -1,0 +1,61 @@
+<view class="page apply-page">
+  <view class="order-card">
+    <view class="card-title">关联订单</view>
+    <view class="order-no">{{snapshot.orderNo}}</view>
+    <view class="product-name">{{snapshot.productName}} · {{snapshot.specText}}</view>
+    <view class="info-grid">
+      <view><text>购买斤数</text><text>{{snapshot.totalWeight}}斤</text></view>
+      <view><text>配送方式</text><text>{{snapshot.deliveryMethod}}</text></view>
+      <view><text>签收/自提</text><text>{{snapshot.receivedAt || '未记录'}}</text></view>
+      <view><text>联系人</text><text>{{snapshot.customerName}} {{snapshot.customerPhone}}</text></view>
+    </view>
+    <view class="deadline">{{deadlineText}}</view>
+  </view>
+
+  <view class="form-card">
+    <view class="card-title">售后类型</view>
+    <view class="choice-grid">
+      <view class="choice {{selectedType == item ? 'selected' : ''}}" wx:for="{{types}}" wx:key="*this" data-value="{{item}}" bindtap="selectType">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="form-card">
+    <view class="card-title">希望如何处理</view>
+    <view class="choice-grid method-grid">
+      <view class="choice {{selectedMethod == item ? 'selected' : ''}}" wx:for="{{methods}}" wx:key="*this" data-value="{{item}}" bindtap="selectMethod">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="form-card">
+    <view class="title-row">
+      <view class="card-title">问题描述</view>
+      <view class="counter">{{remaining}}字</view>
+    </view>
+    <textarea class="description-input" value="{{description}}" maxlength="{{config.descriptionMaxLength}}" bindinput="inputDescription" placeholder="请说明发现时间、问题数量和具体情况"></textarea>
+  </view>
+
+  <view class="form-card">
+    <view class="title-row">
+      <view class="card-title">凭证图片</view>
+      <view class="counter">{{evidenceImages.length}}/{{config.evidenceMaxCount}}</view>
+    </view>
+    <view class="evidence-tip">{{config.evidenceTip}}</view>
+    <view class="image-grid">
+      <view class="image-item" wx:for="{{evidenceImages}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewEvidence"></image>
+        <view class="remove" data-index="{{index}}" catchtap="removeEvidence">删除</view>
+      </view>
+      <view class="add-image" wx:if="{{evidenceImages.length < config.evidenceMaxCount}}" bindtap="chooseEvidence">
+        <view class="add-symbol">+</view>
+        <view>拍照/相册</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rule-note">
+    <view>{{config.perishableNotice}}</view>
+    <view class="rule-link" bindtap="openRules">查看完整售后规则 ›</view>
+  </view>
+
+  <button class="submit-btn" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submitApplication">{{submitting ? '正在提交' : '提交售后申请'}}</button>
+</view>

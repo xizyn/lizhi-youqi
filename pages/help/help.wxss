@@ -1,0 +1,76 @@
+.member-page {
+  padding: 48rpx 30rpx 130rpx;
+  background: #faf5eb;
+}
+
+.page-head {
+  padding: 28rpx 0 20rpx;
+}
+
+.page-title {
+  color: #25331e;
+  font-size: 38rpx;
+  font-weight: 800;
+}
+
+.page-subtitle {
+  margin-top: 10rpx;
+  color: #7a826f;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.help-card {
+  margin-bottom: 22rpx;
+  padding: 30rpx 26rpx;
+  border-radius: 18rpx;
+  background: #fffdf7;
+  box-shadow: 0 12rpx 28rpx rgba(80, 96, 62, 0.06);
+}
+
+.help-title {
+  color: #25331e;
+  font-size: 32rpx;
+  font-weight: 800;
+}
+
+.help-desc {
+  margin-top: 10rpx;
+  color: #6f7a65;
+  font-size: 24rpx;
+  line-height: 1.6;
+}
+
+.help-list {
+  margin-top: 16rpx;
+}
+
+.help-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  padding: 10rpx 0;
+  color: #4f5b46;
+  font-size: 24rpx;
+  line-height: 1.75;
+}
+
+.help-dot {
+  flex: 0 0 10rpx;
+  width: 10rpx;
+  height: 10rpx;
+  margin-top: 16rpx;
+  border-radius: 50%;
+  background: #4f7d46;
+}
+
+.help-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.help-lead {
+  margin-right: 8rpx;
+  color: #315f2d;
+  font-weight: 800;
+}

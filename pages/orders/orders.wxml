@@ -1,0 +1,115 @@
+<view class="orders-page">
+  <scroll-view class="status-tabs-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="status-tabs">
+      <view
+        class="status-tab {{item.activeClass}}"
+        wx:for="{{statusTabs}}"
+        wx:key="key"
+        data-filter="{{item.key}}"
+        bindtap="filterByStatus"
+      >
+        <text>{{item.label}}</text>
+        <text class="status-count">{{item.count}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="status-notice {{statusNotice.className}}">
+    <view class="notice-icon-wrap">
+      <image class="notice-icon" src="{{statusNotice.icon}}" mode="aspectFit"></image>
+    </view>
+    <view class="notice-copy">
+      <view class="notice-title">{{statusNotice.title}}</view>
+      <view class="notice-description">{{statusNotice.description}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{orders.length == 0}}" class="empty-card">
+    <view class="empty-title">当前暂无订单</view>
+    <view class="empty-description">切换其他状态查看，或从首页提交新的预约订单。</view>
+  </view>
+
+  <view wx:else class="order-list">
+    <view class="order-card" wx:for="{{orders}}" wx:key="orderNoText">
+      <view class="order-number-row">
+        <view class="order-number">订单号：{{item.orderNoText}}</view>
+        <view
+          class="copy-link"
+          data-value="{{item.orderNoText}}"
+          data-label="订单号"
+          bindtap="copyText"
+        >复制</view>
+      </view>
+
+      <view class="product-row">
+        <image class="product-image" src="{{item.productImage}}" mode="aspectFill"></image>
+        <view class="product-copy">
+          <view class="product-title-row">
+            <view class="product-name">{{item.productNameText}}</view>
+            <view class="order-amount">{{item.amountText}}</view>
+          </view>
+          <view class="product-spec">{{item.productSpecText}}</view>
+          <view class="product-bottom-row">
+            <view class="product-quantity">{{item.productQuantityText}}</view>
+            <view class="status-badge {{item.statusClass}}">{{item.userStatusShortText}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="order-details">
+        <view class="detail-row">
+          <view class="detail-label">配送方式</view>
+          <view class="detail-value">{{item.deliverySummary}}</view>
+        </view>
+
+        <view class="detail-row" wx:if="{{item.isExpress}}">
+          <view class="detail-label">顺丰单号</view>
+          <view class="detail-value detail-value-inline">
+            <text>{{item.trackingNoText || '物流信息待更新'}}</text>
+            <text
+              wx:if="{{item.trackingNoText}}"
+              class="inline-copy"
+              data-value="{{item.trackingNoText}}"
+              data-label="顺丰单号"
+              bindtap="copyText"
+            >复制</text>
+          </view>
+        </view>
+
+        <view class="detail-row" wx:if="{{item.isPickup}}">
+          <view class="detail-label">自提点</view>
+          <view class="detail-value">{{item.pickupOrAddressText}}</view>
+        </view>
+
+        <view class="detail-row">
+          <view class="detail-label">联系电话</view>
+          <view class="detail-value">{{item.customerPhoneText}}</view>
+        </view>
+
+        <view class="detail-row">
+          <view class="detail-label">下单时间</view>
+          <view class="detail-value">{{item.createdAtText}}</view>
+        </view>
+
+        <view class="detail-row amount-row">
+          <view class="detail-label">订单金额</view>
+          <view class="detail-value amount-value">{{item.amountText}}</view>
+        </view>
+      </view>
+
+      <view class="action-grid {{item.actionClass}}">
+        <button class="order-action action-detail" data-id="{{item.storageId}}" bindtap="showOrderDetail">查看详情</button>
+        <button wx:if="{{item.showContact}}" class="order-action action-contact" bindtap="contactService">联系客服</button>
+        <button wx:if="{{item.showCancel}}" class="order-action action-cancel" data-id="{{item.storageId}}" bindtap="cancelOrder">取消订单</button>
+        <button wx:if="{{item.showProgress}}" class="order-action action-progress" data-id="{{item.storageId}}" bindtap="showProgress">查看进度</button>
+        <button wx:if="{{item.showLogistics}}" class="order-action action-logistics" data-id="{{item.storageId}}" bindtap="showLogistics">查看物流</button>
+        <button wx:if="{{item.showAfterSale}}" class="order-action action-after-sale" data-id="{{item.storageId}}" bindtap="applyAfterSale">{{item.afterSaleActionText}}</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="page-tip">
+    <view class="tip-dot"></view>
+    <view>订单由自家果园客服确认，付款、采摘和配送进度以实际沟通为准。</view>
+  </view>
+</view>

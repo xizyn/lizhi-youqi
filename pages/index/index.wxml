@@ -1,0 +1,94 @@
+<view class="page index-page">
+  <view class="hero-card">
+    <image class="hero-photo" src="/assets/images/banner-lychee.png" mode="aspectFill"></image>
+    <view class="hero-photo-fade"></view>
+    <view class="hero-copy">
+      <view class="hero-title">荔枝有期</view>
+      <view class="hero-subtitle">深圳本地自家果园 · 现摘现发</view>
+      <view class="hero-small">
+        <text class="leaf-dot">叶</text>
+        <text>桂味 / 糯米糍 · 自家果园种植</text>
+      </view>
+    </view>
+    <view class="hero-tip">
+      <text class="tip-dot">盾</text>
+      <text>桂味 / 糯米糍 · 自家果园种植 · 鲜果异常请及时联系</text>
+    </view>
+  </view>
+
+  <view class="entry-panel">
+    <view class="entry-card" wx:for="{{entries}}" wx:key="title" data-url="{{item.url}}" bindtap="navigateTo">
+      <view class="icon-wrap {{item.disabled ? 'icon-disabled' : ''}}">
+        <image class="home-icon" src="{{item.iconPath}}" mode="aspectFit"></image>
+      </view>
+      <view class="entry-title">{{item.title}}</view>
+      <view class="entry-desc">{{item.desc}}</view>
+    </view>
+  </view>
+
+  <view class="reminder-card" data-url="/pages/reminder/reminder" bindtap="navigateTo">
+    <view class="round-icon bell-icon">
+      <image class="small-icon" src="/assets/icons/home-bell.png" mode="aspectFit"></image>
+    </view>
+    <view class="reminder-copy">
+      <view class="reminder-title">{{notice.title}}</view>
+      <view class="reminder-text">{{notice.content}}</view>
+    </view>
+    <view class="reminder-button">去订阅</view>
+  </view>
+
+  <view class="quick-panel">
+    <view class="quick-card" bindtap="showDeliveryInfo">
+      <view class="quick-icon">
+        <image class="quick-icon-img" src="/assets/icons/home-delivery.png" mode="aspectFit"></image>
+      </view>
+      <view class="quick-copy">
+        <view class="quick-title">配送说明</view>
+        <view class="quick-desc">自提 / 配送 / 快递</view>
+        <view class="quick-desc">查看配送范围与说明</view>
+      </view>
+      <view class="quick-arrow">›</view>
+    </view>
+    <view class="quick-card" bindtap="contactService">
+      <view class="quick-icon">
+        <image class="quick-icon-img" src="/assets/icons/home-service.png" mode="aspectFit"></image>
+      </view>
+      <view class="quick-copy">
+        <view class="quick-title">联系客服</view>
+        <view class="quick-desc">订单咨询 / 配送沟通</view>
+        <view class="quick-desc">售后处理</view>
+      </view>
+      <view class="quick-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="section-card supply-card">
+    <view class="section-head">
+      <view class="section-title">本季供应预览</view>
+      <view class="section-tag">预计供应</view>
+    </view>
+    <view class="supply-products">
+      <view class="supply-item" wx:for="{{supplyItems}}" wx:key="name">
+        <image class="supply-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="supply-info">
+          <view class="supply-name">{{item.name}}</view>
+          <view class="supply-desc">{{item.desc}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="supply-tags">
+      <view class="supply-tag" wx:for="{{supplyTags}}" wx:key="*this">{{item}}</view>
+    </view>
+    <view class="supply-time">预计2027年6月底至7月中旬开售</view>
+  </view>
+
+  <view class="section-card orchard-card">
+    <view class="section-head">
+      <view class="section-title">自家果园实拍</view>
+    </view>
+    <view class="orchard-photos">
+      <image class="orchard-photo" wx:for="{{orchardPhotos}}" wx:key="*this" src="{{item}}" mode="aspectFill"></image>
+    </view>
+    <view class="orchard-note">深圳本地自家果园，实际供应以当季采摘为准</view>
+  </view>
+</view>

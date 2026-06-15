@@ -1,0 +1,134 @@
+<view class="page form-page">
+  <view class="page-head">
+    <view class="page-title">{{title}}</view>
+    <view class="page-subtitle">{{subtitle}}</view>
+  </view>
+
+  <view class="status-banner {{statusBannerClass}}" wx:if="{{salesStatus}}">
+    <view class="status-title">{{salesStatus.label}}</view>
+    <view class="status-desc">{{salesStatus.description}}</view>
+  </view>
+
+  <view class="notice-box" wx:if="{{config.announcement}}">
+    <view>后台说明：{{config.announcement}}</view>
+    <view>采摘状态：{{config.harvestStatus}}</view>
+  </view>
+
+  <view class="notice-box">{{courierFeeNotice}}</view>
+
+  <view class="notice-box">
+    <view class="notice-list">
+      <view class="notice-item" wx:for="{{deliveryNotice}}" wx:key="*this">· {{item}}</view>
+    </view>
+  </view>
+
+  <view class="form-card">
+    <view class="section-title">预留联系方式</view>
+    <view class="field">
+      <view class="field-label">预留手机号</view>
+      <input class="field-input" type="number" maxlength="11" value="{{form.buyerPhone}}" data-field="buyerPhone" bindinput="handleInput" placeholder="用于客服确认" />
+    </view>
+
+    <view class="section-divider"></view>
+    <view class="section-title">收件信息</view>
+    <view class="field">
+      <view class="field-label">收件人姓名</view>
+      <input class="field-input" value="{{form.recipientName}}" data-field="recipientName" bindinput="handleInput" placeholder="请填写收件人姓名" />
+    </view>
+    <view class="field">
+      <view class="field-label">收件人手机号</view>
+      <input class="field-input" type="number" maxlength="11" value="{{form.recipientPhone}}" data-field="recipientPhone" bindinput="handleInput" placeholder="请填写收件人手机号" />
+    </view>
+    <view class="field">
+      <view class="field-label">收件地址</view>
+      <textarea class="field-textarea" maxlength="240" value="{{form.address}}" data-field="address" bindinput="handleInput" placeholder="请填写完整收件地址" />
+    </view>
+
+    <view class="section-divider"></view>
+    <view class="section-title">商品信息</view>
+    <view class="sku-grid">
+      <view class="sku-card {{item.activeClass}} {{item.disabled ? 'disabled' : ''}}" wx:for="{{skuOptions}}" wx:key="id" data-id="{{item.id}}" bindtap="selectSku">
+        <image class="sku-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="sku-content">
+          <view class="sku-name">{{item.name}}</view>
+          <view class="sku-desc">{{item.specText}}</view>
+          <view class="sku-meta" wx:if="{{supportsGiftBox}}">{{item.giftBoxText}}</view>
+          <view class="sku-meta" wx:else>{{item.metaText}}</view>
+          <view class="sku-meta sold-meta" wx:if="{{item.statusText}}">{{item.statusText}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="field-tip">请选择固定商品规格，不支持自定义斤数。</view>
+    <view class="field">
+      <view class="field-label">数量（箱）</view>
+      <input class="field-input" type="number" value="{{form.quantity}}" data-field="quantity" bindinput="handleInput" placeholder="请填写箱数" />
+    </view>
+    <block wx:if="{{showGiftBoxField}}">
+      <view class="field">
+        <view class="field-label">是否需要礼盒</view>
+        <picker mode="selector" range="{{yesNoOptions}}" value="{{needGiftBoxIndex}}" data-field="needGiftBox" bindchange="handlePicker">
+          <view class="picker-value">{{form.needGiftBox}}</view>
+        </picker>
+        <view class="field-tip" wx:if="{{form.needGiftBox == '是'}}">当前规格礼盒 {{giftBoxUnitFee}} 元/箱，礼盒费用合计 {{giftBoxFee}} 元。</view>
+      </view>
+    </block>
+    <view class="field-tip" wx:if="{{showGiftBoxNotice}}">快递订单不支持礼盒包装。</view>
+    <view class="field">
+      <view class="field-label">是否保留少量枝叶</view>
+      <picker mode="selector" range="{{yesNoOptions}}" value="{{keepBranchesIndex}}" data-field="keepBranches" bindchange="handlePicker">
+        <view class="picker-value">{{form.keepBranches}}</view>
+      </picker>
+      <view class="field-tip">{{branchNotice}}</view>
+    </view>
+
+    <view class="section-divider"></view>
+    <view class="section-title">送礼信息</view>
+    <view class="field">
+      <view class="field-label">是否送人</view>
+      <picker mode="selector" range="{{yesNoOptions}}" value="{{isGiftIndex}}" data-field="isGift" bindchange="handlePicker">
+        <view class="picker-value">{{form.isGift}}</view>
+      </picker>
+    </view>
+    <view class="field">
+      <view class="field-label">是否隐藏价格</view>
+      <picker mode="selector" range="{{yesNoOptions}}" value="{{hidePriceIndex}}" data-field="hidePrice" bindchange="handlePicker">
+        <view class="picker-value">{{form.hidePrice}}</view>
+      </picker>
+    </view>
+    <view class="notice-box" wx:if="{{form.isGift == '是'}}">{{giftNotice}}</view>
+    <block wx:if="{{form.isGift == '是'}}">
+      <view class="field">
+        <view class="field-label">送礼人姓名（选填）</view>
+        <input class="field-input" value="{{form.giverName}}" data-field="giverName" bindinput="handleInput" placeholder="选填" />
+      </view>
+      <view class="field">
+        <view class="field-label">送礼人联系方式（选填）</view>
+        <input class="field-input" value="{{form.giverContact}}" data-field="giverContact" bindinput="handleInput" placeholder="选填" />
+      </view>
+      <view class="field">
+        <view class="field-label">祝福语（选填）</view>
+        <textarea class="field-textarea" maxlength="160" value="{{form.blessing}}" data-field="blessing" bindinput="handleInput" placeholder="选填" />
+      </view>
+    </block>
+
+    <view class="field">
+      <view class="field-label">备注</view>
+      <textarea class="field-textarea" maxlength="240" value="{{form.note}}" data-field="note" bindinput="handleInput" placeholder="可填写包装、送礼或配送偏好" />
+    </view>
+
+    <view class="summary-card">
+      <view class="summary-title">订单确认</view>
+      <view class="summary-line"><text>配送方式</text><text class="summary-value">{{form.deliveryMethod}} / {{form.thirdPartyMethod}}</text></view>
+      <view class="summary-line"><text>商品</text><text class="summary-value">{{selectedSkuName}} / {{form.quantity}}箱</text></view>
+      <view class="summary-line"><text>荔枝规格</text><text class="summary-value">{{fruitWeightText}}</text></view>
+      <view class="summary-line"><text>预估计费重量</text><text class="summary-value">{{estimatedCourierWeightText}}</text></view>
+      <view class="summary-line"><text>果品价格</text><text class="summary-value">{{productPriceText}}</text></view>
+      <view class="summary-line"><text>礼盒费用</text><text class="summary-value">{{giftBoxFee}}元</text></view>
+      <view class="summary-line"><text>预收运费</text><text class="summary-value">{{estimatedShippingFeeText}}</text></view>
+      <view class="summary-line"><text>页面合计</text><text class="summary-value">{{estimatedAmountText}}</text></view>
+      <view class="weight-note">{{weightNotice}}</view>
+    </view>
+
+    <button class="submit-button" disabled="{{submitBlocked}}" bindtap="submitForm">{{submitButtonText}}</button>
+  </view>
+</view>

@@ -1,0 +1,33 @@
+.risk-head {
+  padding: 30rpx;
+  border-radius: 16rpx;
+  background: #fff2eb;
+}
+
+.risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  margin-top: 26rpx;
+}
+
+.risk-item {
+  display: grid;
+  grid-template-columns: 56rpx minmax(0, 1fr);
+  gap: 18rpx;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  background: #fffdf6;
+}
+
+.risk-index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  color: #fffdf8;
+  background: #b83b37;
+  font-weight: 800;
+}

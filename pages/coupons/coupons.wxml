@@ -1,0 +1,36 @@
+<view class="page member-page">
+  <view class="page-head">
+    <view class="page-title">我的优惠券</view>
+    <view class="page-subtitle">优惠券将通过开售福利、活动奖励等形式发放，下单结算时可按规则抵扣。</view>
+  </view>
+
+  <view class="coupon-tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="id"
+      class="coupon-tab {{activeTab == item.id ? 'active' : ''}}"
+      data-tab="{{item.id}}"
+      bindtap="switchTab"
+    >{{item.text}}</view>
+  </view>
+
+  <view wx:if="{{coupons.length == 0}}" class="empty-state">
+    <view class="empty-title">暂无优惠券</view>
+    <view class="empty-desc">关注开售提醒，领首单专属优惠</view>
+    <button class="empty-btn" bindtap="openReminder">去订阅开售提醒</button>
+  </view>
+  <view wx:else class="coupon-list">
+    <view class="coupon-card status-{{item.statusClass}}" wx:for="{{coupons}}" wx:key="displayId">
+      <view class="coupon-main">
+        <view class="coupon-title">{{item.couponName}}</view>
+        <view class="coupon-desc">{{item.thresholdText}} · {{item.couponType}} · {{item.applyScene}}</view>
+        <view class="coupon-time">{{item.validTime}}</view>
+      </view>
+      <view class="coupon-side">
+        <view class="coupon-amount">{{item.amountText}}</view>
+        <view class="coupon-status">{{item.status}}</view>
+        <button wx:if="{{item.canClaim}}" class="claim-btn" data-id="{{item.couponId}}" bindtap="claimCoupon">领取</button>
+      </view>
+    </view>
+  </view>
+</view>

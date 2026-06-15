@@ -1,0 +1,91 @@
+<view class="page admin-coupon-page" wx:if="{{authorized}}">
+  <view class="page-head">
+    <view class="page-title">优惠券管理</view>
+    <view class="page-subtitle">当前为 mockData + 本地缓存模拟，不做真实发放接口。</view>
+  </view>
+
+  <view class="form-card">
+    <view class="section-title">新增优惠券</view>
+    <view class="field">
+      <view class="field-label">优惠券名称</view>
+      <input class="field-input" value="{{form.couponName}}" data-field="couponName" bindinput="handleInput" placeholder="例如 开售提醒满100减10" />
+    </view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="field-label">优惠券类型</view>
+        <picker mode="selector" range="{{couponTypes}}" value="{{couponTypeIndex}}" data-field="couponType" bindchange="handlePicker">
+          <view class="picker-value">{{form.couponType}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <view class="field-label">适用场景</view>
+        <picker mode="selector" range="{{applyScenes}}" value="{{applySceneIndex}}" data-field="applyScene" bindchange="handlePicker">
+          <view class="picker-value">{{form.applyScene}}</view>
+        </picker>
+      </view>
+    </view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="field-label">使用门槛</view>
+        <input class="field-input" type="digit" value="{{form.thresholdAmount}}" data-field="thresholdAmount" bindinput="handleInput" placeholder="100" />
+      </view>
+      <view class="field">
+        <view class="field-label">减免金额</view>
+        <input class="field-input" type="digit" value="{{form.discountAmount}}" data-field="discountAmount" bindinput="handleInput" placeholder="10" />
+      </view>
+    </view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="field-label">折扣</view>
+        <input class="field-input" type="digit" value="{{form.discountRate}}" data-field="discountRate" bindinput="handleInput" placeholder="9 表示9折" />
+      </view>
+      <view class="field">
+        <view class="field-label">总数量</view>
+        <input class="field-input" type="number" value="{{form.totalCount}}" data-field="totalCount" bindinput="handleInput" placeholder="不填为不限" />
+      </view>
+    </view>
+    <view class="field-grid">
+      <view class="field">
+        <view class="field-label">有效开始</view>
+        <input class="field-input" value="{{form.validStart}}" data-field="validStart" bindinput="handleInput" placeholder="2027-06-20" />
+      </view>
+      <view class="field">
+        <view class="field-label">有效结束</view>
+        <input class="field-input" value="{{form.validEnd}}" data-field="validEnd" bindinput="handleInput" placeholder="2027-07-20" />
+      </view>
+    </view>
+    <view class="field">
+      <view class="field-label">状态</view>
+      <picker mode="selector" range="{{statuses}}" value="{{statusIndex}}" data-field="status" bindchange="handlePicker">
+        <view class="picker-value">{{form.status}}</view>
+      </picker>
+    </view>
+    <button class="action-btn green-btn" bindtap="addCoupon">新增优惠券</button>
+  </view>
+
+  <view class="coupon-list">
+    <view class="coupon-card" wx:for="{{coupons}}" wx:key="couponId">
+      <view class="coupon-top">
+        <view>
+          <view class="coupon-name">{{item.couponName}}</view>
+          <view class="coupon-id">{{item.couponId}}</view>
+        </view>
+        <view class="status-pill status-{{item.statusClass}}">{{item.status}}</view>
+      </view>
+      <view class="coupon-lines">
+        <view>类型：{{item.couponType}}</view>
+        <view>门槛：{{item.thresholdText}}</view>
+        <view>优惠：{{item.discountText}}</view>
+        <view>场景：{{item.applyScene}}</view>
+        <view>有效期：{{item.validStart}} 至 {{item.validEnd}}</view>
+        <view>发放：{{item.stockText}}</view>
+        <view>已使用：{{item.usedCount}}</view>
+      </view>
+      <view class="button-row">
+        <button class="mini-btn" data-id="{{item.couponId}}" data-status="已上架" bindtap="setCouponStatus">上架</button>
+        <button class="mini-btn gray-btn" data-id="{{item.couponId}}" data-status="已停用" bindtap="setCouponStatus">停用</button>
+        <button class="mini-btn plain-btn" data-id="{{item.couponId}}" bindtap="simulateIssue">后台模拟发放</button>
+      </view>
+    </view>
+  </view>
+</view>

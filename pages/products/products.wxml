@@ -1,0 +1,28 @@
+<view class="page products-page">
+  <view class="notice">2026年是小年，今年暂无荔枝销售。以下为2027年预约和产品展示的模拟信息。</view>
+
+  <view class="product-list">
+    <view class="product-card" wx:for="{{products}}" wx:key="id">
+      <view class="product-head">
+        <view>
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-season">{{item.season}}</view>
+        </view>
+        <view class="product-status">{{item.status}}</view>
+      </view>
+      <view class="product-desc">{{item.description}}</view>
+      <view class="tag-row">
+        <text class="tag tag-red" wx:for="{{item.features}}" wx:for-item="feature" wx:key="*this">{{feature}}</text>
+      </view>
+      <view class="delivery-row">
+        <text class="muted">配送：</text>
+        <text class="delivery-tag" wx:for="{{item.delivery}}" wx:for-item="delivery" wx:key="*this">{{delivery}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="button-stack">
+    <button class="action-btn primary-btn" data-url="/pages/reminder/reminder" bindtap="navigateTo">登记购买提醒</button>
+    <button class="action-btn green-btn" data-url="/pages/group-buy/group-buy" bindtap="navigateTo">企业团购咨询</button>
+  </view>
+</view>

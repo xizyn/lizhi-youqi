@@ -1,0 +1,17 @@
+<view class="page member-page">
+  <view class="page-head">
+    <view class="page-title">帮助与须知</view>
+    <view class="page-subtitle">配送说明、购买须知、鲜果售后和采摘延迟说明。</view>
+  </view>
+
+  <view class="help-card" wx:for="{{sections}}" wx:key="id">
+    <view class="help-title">{{item.title}}</view>
+    <view class="help-desc">{{item.desc}}</view>
+    <view class="help-list">
+      <view class="help-item" wx:for="{{item.items}}" wx:for-item="line" wx:key="*this">
+        <view class="help-dot"></view>
+        <view class="help-text"><text class="help-lead">{{line.lead}}</text>{{line.text}}</view>
+      </view>
+    </view>
+  </view>
+</view>

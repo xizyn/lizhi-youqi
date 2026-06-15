@@ -1,0 +1,139 @@
+<view class="page admin-after-page" wx:if="{{authorized}}">
+  <view class="hero-card">
+    <view>
+      <view class="hero-title">售后管理</view>
+      <view class="hero-desc">独立处理售后，不会覆盖订单主状态。</view>
+    </view>
+    <view class="pending-count">待审核 <text>{{filters[1].count || 0}}</text> 单</view>
+  </view>
+
+  <scroll-view class="filter-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="filter-row">
+      <view class="filter-item {{item.active ? 'active' : ''}}" wx:for="{{filters}}" wx:key="key" data-key="{{item.key}}" bindtap="switchFilter">{{item.label}} {{item.count}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="list-toolbar">
+    <view>
+      <view class="list-title">售后工单</view>
+      <view class="list-subtitle">共 {{records.length}} 条当前筛选结果</view>
+    </view>
+    <view class="toolbar-actions">
+      <button class="minor-action" bindtap="toggleManualRegistration">{{manualExpanded ? '收起登记' : '手动登记'}}</button>
+      <button class="minor-action" bindtap="toggleRules">规则设置 {{rulesExpanded ? '↑' : '↓'}}</button>
+    </view>
+  </view>
+
+  <view class="manual-card compact-card" wx:if="{{rulesExpanded}}">
+    <view class="collapse-head" bindtap="toggleRules">
+      <view class="section-title">售后规则设置</view>
+      <view class="collapse-arrow">↑</view>
+    </view>
+    <view class="section-desc">申请时限从签收或自提时间开始计算。</view>
+    <input class="field-input" type="number" value="{{config.applicationWindowHours}}" data-field="applicationWindowHours" bindinput="inputConfig" placeholder="申请时限（小时）" />
+    <button class="save-btn" bindtap="saveConfig">保存规则设置</button>
+  </view>
+
+  <view class="manual-card" wx:if="{{manualExpanded}}">
+    <view class="section-title">管理员手动登记</view>
+    <view class="section-desc">订单未记录签收时间时，可由管理员核实后登记。</view>
+    <picker mode="selector" range="{{orderLabels}}" value="{{manualOrderIndex}}" bindchange="changeManualOrder">
+      <view class="picker-value">{{orderLabels[manualOrderIndex] || '暂无订单'}}</view>
+    </picker>
+    <picker mode="selector" range="{{config.types}}" value="{{manualTypeIndex}}" bindchange="changeManualType">
+      <view class="picker-value">{{config.types[manualTypeIndex] || '其他问题'}}</view>
+    </picker>
+    <textarea class="field-textarea" maxlength="300" value="{{manualForm.description}}" data-field="description" bindinput="inputManual" placeholder="登记问题说明"></textarea>
+    <textarea class="field-textarea" maxlength="300" value="{{manualForm.adminReply}}" data-field="adminReply" bindinput="inputManual" placeholder="管理员处理说明"></textarea>
+    <view class="manual-submit-row">
+      <button class="manual-submit" bindtap="createManualRecord">登记为处理中</button>
+    </view>
+  </view>
+
+  <view class="empty-card" wx:if="{{records.length == 0}}">当前筛选下暂无售后记录</view>
+  <view class="record-list" wx:else>
+    <view class="record-card" wx:for="{{records}}" wx:for-index="recordIndex" wx:key="afterSaleId">
+      <view class="record-head" data-id="{{item.afterSaleId}}" bindtap="toggleDetail">
+        <view>
+          <view class="order-line">
+            <view class="order-no">{{item.orderNo}}</view>
+            <view class="mini-copy" data-index="{{recordIndex}}" catchtap="copyOrderNo">复制</view>
+          </view>
+          <view class="product-name">{{item.productText}}</view>
+        </view>
+        <view class="status status-{{item.statusTone}}">{{item.statusText}}</view>
+      </view>
+      <view class="summary-row">
+        <view class="customer-summary">
+          <text>{{item.customerName}} {{item.customerPhone}}</text>
+          <text class="mini-copy inline-copy" data-index="{{recordIndex}}" catchtap="copyPhone">复制</text>
+        </view>
+        <view class="ticket-tags">
+          <text class="type-tag">{{item.type}}</text>
+          <text class="delivery-tag">{{item.deliveryTag}}</text>
+        </view>
+      </view>
+      <view class="summary-row"><text>规格重量</text><text class="weight-value">{{item.weightText}}</text></view>
+      <view class="expand-link" data-id="{{item.afterSaleId}}" bindtap="toggleDetail">{{item.expanded ? '收起处理区' : '查看并处理'}} ›</view>
+
+      <view class="record-detail" wx:if="{{item.expanded}}">
+        <view class="product-detail-card">
+          <view class="detail-row"><text>商品名称</text><text>{{item.productName || '未填写'}}</text></view>
+          <view class="detail-row weight-row"><text>规格重量</text><text>{{item.weightText}}</text></view>
+        </view>
+        <view class="detail-block-title problem-title">原始问题描述</view>
+        <view class="description display-description">{{item.description || '未填写问题描述'}}</view>
+        <view class="image-grid" wx:if="{{item.evidenceImages.length}}">
+          <image wx:for="{{item.evidenceImages}}" wx:for-item="image" wx:for-index="imageIndex" wx:key="*this" src="{{image}}" mode="aspectFill" data-src="{{image}}" data-record-index="{{recordIndex}}" bindtap="previewImage"></image>
+        </view>
+        <view class="image-tip" wx:if="{{item.evidenceImages.length}}">点击图片可放大查看，支持左右滑动。</view>
+
+        <view class="log-section">
+          <view class="detail-block-title">处理记录</view>
+          <view class="section-desc">用户补充和客服说明按时间记录。本地模式仅支持同一设备查看。</view>
+          <view class="log-empty" wx:if="{{item.communicationLogs.length == 0}}">暂无沟通与处理记录</view>
+          <view class="log-list" wx:else>
+            <view class="log-item log-{{log.roleTone}}" wx:for="{{item.communicationLogs}}" wx:for-item="log" wx:for-index="logIndex" wx:key="id">
+              <view class="log-head">
+                <view>
+                  <text class="log-role">{{log.roleLabel}}</text>
+                  <text class="log-type" wx:if="{{log.recordType}}">{{log.recordType}}</text>
+                </view>
+                <text class="log-time">{{log.createdAt}}</text>
+              </view>
+              <view class="log-content" wx:if="{{log.content}}">{{log.content}}</view>
+              <view class="log-images" wx:if="{{log.images.length}}">
+                <image wx:for="{{log.images}}" wx:for-item="logImage" wx:key="*this" src="{{logImage}}" mode="aspectFill" data-src="{{logImage}}" data-record-index="{{recordIndex}}" data-log-index="{{logIndex}}" bindtap="previewLogImage"></image>
+              </view>
+            </view>
+          </view>
+
+          <view class="admin-log-form">
+            <picker mode="selector" range="{{adminRecordTypes}}" value="{{item.logTypeIndex}}" data-index="{{recordIndex}}" bindchange="changeAdminLogType">
+              <view class="picker-value compact-picker">记录类型：{{adminRecordTypes[item.logTypeIndex]}}</view>
+            </picker>
+            <view class="log-input-head"><text>新增处理说明</text><text>{{item.logRemaining}}/200</text></view>
+            <textarea class="field-textarea" maxlength="200" value="{{item.newLogContent}}" data-index="{{recordIndex}}" bindinput="inputAdminLog" placeholder="填写本次核实、补发、退款或协商说明"></textarea>
+            <button class="save-log-btn" data-index="{{recordIndex}}" bindtap="addAdminLog">保存处理记录</button>
+          </view>
+        </view>
+
+        <view class="detail-block-title process-title">售后状态处理</view>
+        <textarea class="field-textarea" maxlength="300" value="{{item.adminReply}}" data-index="{{recordIndex}}" data-field="adminReply" bindinput="inputRecordField" placeholder="处理说明（接受、补发或退款时必填）"></textarea>
+        <textarea class="field-textarea" maxlength="300" value="{{item.rejectReason}}" data-index="{{recordIndex}}" data-field="rejectReason" bindinput="inputRecordField" placeholder="拒绝原因（拒绝时必填）"></textarea>
+        <input class="field-input" type="digit" value="{{item.approvedAmount}}" data-index="{{recordIndex}}" data-field="approvedAmount" bindinput="inputRecordField" placeholder="拟退款金额，仅记录线下处理" />
+        <input class="field-input" value="{{item.replacementInfo}}" data-index="{{recordIndex}}" data-field="replacementInfo" bindinput="inputRecordField" placeholder="补发商品和重量说明" />
+        <view class="action-grid">
+          <button data-index="{{recordIndex}}" data-action="processing" bindtap="processRecord">接受处理中</button>
+          <button data-index="{{recordIndex}}" data-action="replacement" bindtap="processRecord">确认补发</button>
+          <button data-index="{{recordIndex}}" data-action="partialRefund" bindtap="processRecord">部分退款</button>
+          <button data-index="{{recordIndex}}" data-action="fullRefund" bindtap="processRecord">全额退款</button>
+          <button data-index="{{recordIndex}}" data-action="negotiate" bindtap="processRecord">其他协商</button>
+          <button data-index="{{recordIndex}}" data-action="resolved" bindtap="processRecord">确认线下处理完成</button>
+          <button class="reject-btn" data-index="{{recordIndex}}" data-action="reject" bindtap="processRecord">拒绝申请</button>
+        </view>
+        <view class="operation-note">退款仅记录拟退款金额和线下处理状态；补发会标记为待确认库存，不会静默扣库存。</view>
+      </view>
+    </view>
+  </view>
+</view>

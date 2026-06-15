@@ -1,0 +1,74 @@
+<view class="page after-sales-page">
+  <view class="page-skeleton" wx:if="{{loading}}">
+    <view class="skeleton-card">
+      <view class="skeleton-line medium"></view>
+      <view class="skeleton-line"></view>
+      <view class="skeleton-line short"></view>
+    </view>
+    <view class="skeleton-card">
+      <view class="skeleton-line short"></view>
+      <view class="skeleton-block"></view>
+    </view>
+    <view class="skeleton-card">
+      <view class="skeleton-line medium"></view>
+      <view class="skeleton-line"></view>
+      <view class="skeleton-line short"></view>
+    </view>
+  </view>
+
+  <view class="intro-card">
+    <view>
+      <view class="intro-title">售后服务</view>
+      <view class="intro-desc">查看售后申请与处理进度</view>
+    </view>
+    <view class="rules-link" bindtap="openRules">查看规则</view>
+  </view>
+
+  <view class="rules-card">
+    <view class="rules-title">鲜果售后提示</view>
+    <view class="rules-desc">荔枝属于生鲜水果，请在签收后尽快检查。如发现坏果、破损、少发或商品不符，请在规定时间内提交照片凭证，我们会根据实际情况处理。</view>
+    <view class="rules-list">
+      <view>建议在签收后 <text>{{applicationWindowHours}}小时</text> 内反馈</view>
+      <view>坏果问题请尽量上传坏果、外包装和快递面单照片</view>
+      <view>处理方式包括补发、部分退款或客服协商</view>
+      <view>生鲜商品一般不支持无理由退货</view>
+    </view>
+  </view>
+
+  <scroll-view class="filter-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="filter-row">
+      <view class="filter-item {{item.active ? 'active' : ''}}" wx:for="{{filters}}" wx:key="key" data-key="{{item.key}}" bindtap="switchFilter">
+        <text>{{item.label}}</text>
+        <text class="filter-count">{{item.count}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="empty-card" wx:if="{{records.length == 0}}">
+    <view class="empty-title">目前暂无售后申请，感谢您的信任与支持～</view>
+    <view class="empty-desc">如订单符合售后条件，可从订单详情提交问题和照片凭证。</view>
+    <button class="empty-btn" bindtap="openOrders">去订单页申请售后</button>
+  </view>
+
+  <view class="record-list" wx:else>
+    <view class="record-card" wx:for="{{records}}" wx:key="afterSaleId" data-id="{{item.afterSaleId}}" bindtap="openDetail">
+      <view class="record-head">
+        <view class="order-no">订单 {{item.orderNo}}</view>
+        <view class="status status-{{item.statusTone}}">{{item.statusText}}</view>
+      </view>
+      <view class="product-text">{{item.productText}}</view>
+      <view class="record-row">
+        <text>售后类型</text>
+        <text>{{item.type}}</text>
+      </view>
+      <view class="record-row">
+        <text>提交时间</text>
+        <text>{{item.submittedAt}}</text>
+      </view>
+      <view class="reply">最新回复：{{item.latestReply}}</view>
+      <view class="detail-link">查看处理进度 ›</view>
+    </view>
+  </view>
+
+  <view class="local-note">开发环境：当前记录仅保存在本机，换设备后不会同步。</view>
+</view>

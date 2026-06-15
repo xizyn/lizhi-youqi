@@ -1,0 +1,353 @@
+<view class="preview-page" wx:if="{{authorized}}">
+  <view class="page-skeleton" wx:if="{{loading}}">
+    <view class="skeleton-card">
+      <view class="skeleton-line short"></view>
+      <view class="skeleton-line medium"></view>
+      <view class="skeleton-line"></view>
+    </view>
+    <view class="skeleton-card">
+      <view class="skeleton-block"></view>
+    </view>
+    <view class="skeleton-card">
+      <view class="skeleton-line medium"></view>
+      <view class="skeleton-block"></view>
+    </view>
+  </view>
+
+  <view class="preview-head-card">
+    <view class="preview-kicker">{{rangeLabel}}报表</view>
+    <view class="preview-title">{{reportLabel}}</view>
+    <view class="preview-meta">
+      <text>统计范围：{{rangeLabel}}</text>
+      <text>订单数据：{{orderCount}} 单</text>
+    </view>
+  </view>
+
+  <view class="section-heading">
+    <view>
+      <view class="section-title">作业总览</view>
+      <view class="section-note">取消、售后及退款订单不计入采摘和配送需求</view>
+    </view>
+  </view>
+
+  <view class="summary-grid">
+    <view class="summary-card tone-{{item.tone}}" wx:for="{{summaryCards}}" wx:key="key">
+      <view class="summary-value">{{item.value}}</view>
+      <view class="summary-label">{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="report-tabs">
+    <view
+      class="report-tab {{activeTab == item.key ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      data-tab="{{item.key}}"
+      bindtap="selectTab"
+    >{{item.label}}</view>
+  </view>
+
+  <view class="tab-panel" wx:if="{{activeTab == 'summary'}}">
+    <view class="panel-heading">
+      <view>
+        <view class="panel-title">{{rangeLabel}}整体统计</view>
+        <view class="panel-note">订单、品种、金额和异常状态集中查看</view>
+      </view>
+    </view>
+    <view class="overview-grid">
+      <view class="overview-card tone-{{item.tone}}" wx:for="{{overviewCards}}" wx:key="key">
+        <view class="overview-label">{{item.label}}</view>
+        <view class="overview-value">{{item.value}}</view>
+      </view>
+    </view>
+
+    <view class="finance-card">
+      <view class="finance-title">金额核对</view>
+      <view class="finance-grid">
+        <view class="finance-item">
+          <view class="finance-value">¥{{finance.paidAmount}}</view>
+          <view class="finance-label">已支付金额</view>
+        </view>
+        <view class="finance-item">
+          <view class="finance-value warning">¥{{finance.pendingPayAmount}}</view>
+          <view class="finance-label">待付款金额</view>
+        </view>
+        <view class="finance-item">
+          <view class="finance-value danger">¥{{finance.refundAmount}}</view>
+          <view class="finance-label">售后/退款</view>
+        </view>
+        <view class="finance-item">
+          <view class="finance-value">¥{{finance.actualIncome}}</view>
+          <view class="finance-label">今日实际收入</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-panel" wx:elif="{{activeTab == 'harvest'}}">
+    <view class="panel-heading">
+      <view>
+        <view class="panel-title">采摘备货</view>
+        <view class="panel-note">按正常作业订单计算上山采摘需求</view>
+      </view>
+    </view>
+
+    <view class="harvest-main-grid">
+      <view class="harvest-main-card">
+        <view class="harvest-number">{{harvestTotals.guiweiWeight}}斤</view>
+        <view class="harvest-label">桂味</view>
+      </view>
+      <view class="harvest-main-card">
+        <view class="harvest-number">{{harvestTotals.nuomiciWeight}}斤</view>
+        <view class="harvest-label">糯米糍</view>
+      </view>
+      <view class="harvest-main-card total">
+        <view class="harvest-number">{{harvestTotals.totalWeight}}斤</view>
+        <view class="harvest-label">合计采摘</view>
+      </view>
+    </view>
+    <view wx:if="{{harvestTotals.mixedWeight != '0'}}" class="mixed-notice">
+      混装待确认 {{harvestTotals.mixedWeight}}斤，未拆入桂味或糯米糍，请分拣前核对订单明细。
+    </view>
+
+    <view class="gift-summary">
+      <view class="gift-item">
+        <view class="gift-value">{{harvestTotals.giftBox5Count}}</view>
+        <view class="gift-label">5斤礼盒</view>
+      </view>
+      <view class="gift-divider"></view>
+      <view class="gift-item">
+        <view class="gift-value">{{harvestTotals.giftBox10Count}}</view>
+        <view class="gift-label">10斤礼盒</view>
+      </view>
+    </view>
+
+    <view class="subsection-title">按配送方式备货</view>
+    <view class="harvest-group-list">
+      <view class="harvest-group tone-border-{{group.tone}}" wx:for="{{harvestGroups}}" wx:for-item="group" wx:key="key">
+        <view class="group-head">
+          <view>
+            <view class="group-title">{{group.shortTitle}}</view>
+            <view class="group-count">{{group.orderCount}} 单</view>
+          </view>
+          <view class="group-total">{{group.totalWeight}}斤</view>
+        </view>
+        <view class="group-weight-row">
+          <view class="group-weight-item">
+            <text class="weight-label">桂味</text>
+            <text class="weight-value">{{group.guiweiWeight}}斤</text>
+          </view>
+          <view class="group-weight-item">
+            <text class="weight-label">糯米糍</text>
+            <text class="weight-value">{{group.nuomiciWeight}}斤</text>
+          </view>
+        </view>
+        <view wx:if="{{group.mixedWeight != '0'}}" class="group-mixed-note">
+          含混装待确认 {{group.mixedWeight}}斤
+        </view>
+        <view class="group-gift">礼盒：5斤 {{group.giftBox5Count}} 个 · 10斤 {{group.giftBox10Count}} 个</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-panel" wx:elif="{{activeTab == 'delivery'}}">
+    <view class="panel-heading">
+      <view>
+        <view class="panel-title">发货配送</view>
+        <view class="panel-note">已取消、售后及退款订单已排除</view>
+      </view>
+    </view>
+
+    <view class="delivery-group" wx:for="{{deliveryGroups}}" wx:for-item="group" wx:key="key">
+      <view class="delivery-group-head">
+        <view>
+          <view class="delivery-group-title">{{group.title}}</view>
+          <view class="delivery-group-desc">{{group.description}}</view>
+        </view>
+        <view class="delivery-count tone-bg-{{group.tone}}">{{group.count}} 单</view>
+      </view>
+
+      <view class="group-empty" wx:if="{{group.count == 0}}">暂无{{group.title}}</view>
+      <view class="delivery-order-list" wx:else>
+        <view class="order-card compact" wx:for="{{group.orders}}" wx:for-item="order" wx:key="id">
+          <view class="order-card-head">
+            <view class="order-no">{{order.orderNo}}</view>
+            <view class="status-tag status-{{order.statusTone}}">{{order.status}}</view>
+          </view>
+          <view class="customer-line">
+            <text class="customer-name">{{order.customerName}}</text>
+            <text class="customer-phone">{{order.phone}}</text>
+          </view>
+          <view class="product-line">
+            <view class="product-detail">{{order.productDetail}}</view>
+            <view class="weight-badge">{{order.totalWeight}}斤</view>
+          </view>
+          <view class="info-line">
+            <text class="info-label">礼盒</text>
+            <text class="info-value">{{order.giftBoxText}}</text>
+          </view>
+          <view class="info-line address-line">
+            <text class="info-label">地址</text>
+            <text class="info-value">{{order.address}}</text>
+          </view>
+          <view class="info-line">
+            <text class="info-label">备注</text>
+            <text class="info-value">{{order.remark}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-panel" wx:elif="{{activeTab == 'orders'}}">
+    <view class="panel-heading">
+      <view>
+        <view class="panel-title">订单明细</view>
+        <view class="panel-note">包含待付款、已取消和售后订单，共 {{orderCards.length}} 单</view>
+      </view>
+    </view>
+
+    <view class="group-empty" wx:if="{{orderCards.length == 0}}">当前统计范围暂无订单</view>
+    <view class="order-detail-list" wx:else>
+      <view class="order-card" wx:for="{{orderCards}}" wx:for-item="order" wx:key="id">
+        <view class="order-card-head">
+          <view>
+            <view class="order-no">{{order.orderNo}}</view>
+            <view class="order-time">{{order.createdAt}}</view>
+          </view>
+          <view class="status-tag status-{{order.statusTone}}">{{order.status}}</view>
+        </view>
+        <view class="customer-line">
+          <text class="customer-name">{{order.customerName}}</text>
+          <text class="customer-phone">{{order.phone}}</text>
+        </view>
+        <view class="product-block">
+          <view class="product-detail">{{order.productDetail}}</view>
+          <view class="weight-detail">
+            <text>桂味 {{order.guiweiWeight}}斤</text>
+            <text>糯米糍 {{order.nuomiciWeight}}斤</text>
+            <text class="weight-total">合计 {{order.totalWeight}}斤</text>
+          </view>
+        </view>
+        <view class="info-line">
+          <text class="info-label">配送</text>
+          <text class="info-value">{{order.deliveryMethod}}</text>
+        </view>
+        <view class="info-line">
+          <text class="info-label">礼盒</text>
+          <text class="info-value">{{order.giftBoxText}}</text>
+        </view>
+        <view class="info-line address-line">
+          <text class="info-label">地址</text>
+          <text class="info-value">{{order.address}}</text>
+        </view>
+        <view class="order-card-foot">
+          <view class="remark-text">备注：{{order.remark}}</view>
+          <view class="amount-text">¥{{order.amount}}</view>
+        </view>
+      </view>
+    </view>
+
+    <button class="table-toggle" bindtap="toggleTable">{{showTable ? '收起横向表格' : '查看横向表格'}}</button>
+    <view class="table-section" wx:if="{{showTable}}">
+      <view class="table-tip">左右滑动可查看完整导出字段</view>
+      <view class="empty-table" wx:if="{{report.displayRecords.length == 0}}">当前统计范围暂无订单数据</view>
+      <scroll-view class="table-scroll" scroll-x enhanced show-scrollbar="{{false}}" wx:else>
+        <view class="report-table" style="width: {{tableWidth}};">
+          <view class="table-row table-header">
+            <view
+              class="table-cell {{columnIndex == 0 ? 'first-cell' : ''}}"
+              wx:for="{{report.displayColumns}}"
+              wx:for-item="column"
+              wx:for-index="columnIndex"
+              wx:key="key"
+            >{{column.label}}</view>
+          </view>
+          <view class="table-row" wx:for="{{report.displayRecords}}" wx:for-item="record" wx:key="id">
+            <view
+              class="table-cell {{cellIndex == 0 ? 'first-cell' : ''}}"
+              wx:for="{{record.cells}}"
+              wx:for-item="cell"
+              wx:for-index="cellIndex"
+              wx:key="key"
+            >{{cell.value || '-'}}</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="report-tools">
+    <view class="tool-heading">
+      <view class="tool-title">报表工具</view>
+      <view class="tool-updated">更新于 {{lastUpdatedAt}}</view>
+    </view>
+    <view class="tool-actions">
+      <button class="tool-btn refresh-btn" bindtap="refreshReport">生成/更新报表</button>
+      <button class="tool-btn image-btn" disabled="{{imageGenerating || exporting}}" bindtap="generateReportImage">生成报表图片</button>
+      <button class="tool-btn more-btn" disabled="{{imageGenerating || exporting}}" bindtap="showMoreActions">更多</button>
+    </view>
+    <view class="tool-tip">报表可直接在小程序内查看；图片适合转发到微信群或文件传输助手；CSV / 复制表格适合 Excel 对账。</view>
+  </view>
+
+  <canvas type="2d" id="reportCanvas" class="report-canvas"></canvas>
+
+  <view class="sheet-mask" wx:if="{{showMoreSheet}}" bindtap="closeMoreActions">
+    <view class="more-sheet" catchtap="stopPropagation">
+      <view class="sheet-title">更多导出方式</view>
+      <view class="sheet-note">用于 Excel 对账和完整数据留档</view>
+      <view class="sheet-action" data-action="copy" bindtap="handleMoreAction">
+        <view>
+          <view class="sheet-action-title">复制表格内容</view>
+          <view class="sheet-action-desc">粘贴到 Excel / WPS / 腾讯文档</view>
+        </view>
+        <view class="sheet-arrow">›</view>
+      </view>
+      <view class="sheet-action" data-action="csv" bindtap="handleMoreAction">
+        <view>
+          <view class="sheet-action-title">生成 CSV 文件</view>
+          <view class="sheet-action-desc">生成包含完整订单字段的文件</view>
+        </view>
+        <view class="sheet-arrow">›</view>
+      </view>
+      <view class="sheet-action" data-action="share" bindtap="handleMoreAction">
+        <view>
+          <view class="sheet-action-title">分享 CSV 文件</view>
+          <view class="sheet-action-desc">建议在真机微信中发送</view>
+        </view>
+        <view class="sheet-arrow">›</view>
+      </view>
+      <button class="sheet-cancel" bindtap="closeMoreActions">取消</button>
+    </view>
+  </view>
+
+  <view class="image-mask" wx:if="{{showImageResult}}" bindtap="closeImageResult">
+    <view class="image-result" catchtap="stopPropagation">
+      <view class="image-result-head">
+        <view>
+          <view class="image-result-title">报表图片已生成</view>
+          <view class="image-result-note">图片为汇总及前 4 笔订单摘要</view>
+        </view>
+        <view class="image-close" bindtap="closeImageResult">×</view>
+      </view>
+      <image class="report-image-preview" src="{{generatedImagePath}}" mode="aspectFit" bindtap="previewReportImage"></image>
+      <view class="image-actions">
+        <button class="image-action secondary" bindtap="previewReportImage">预览</button>
+        <button class="image-action secondary" bindtap="saveReportImage">保存相册</button>
+        <button class="image-action primary" bindtap="shareReportImage">转发微信</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="export-loading-mask" wx:if="{{exporting || imageGenerating}}">
+    <view class="export-loading-card">
+      <view class="export-loading-dots">
+        <view class="export-loading-dot"></view>
+        <view class="export-loading-dot"></view>
+        <view class="export-loading-dot"></view>
+      </view>
+      <view class="export-loading-text">{{imageGenerating ? '正在生成报表图片' : exportMessage}}</view>
+      <view class="export-loading-note">完成后即可分享或保存</view>
+    </view>
+  </view>
+</view>

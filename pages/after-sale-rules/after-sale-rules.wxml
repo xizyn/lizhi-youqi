@@ -1,0 +1,26 @@
+<view class="page rules-page">
+  <view class="hero-card">
+    <view class="hero-title">鲜果售后规则</view>
+    <view class="hero-desc">{{config.perishableNotice}}</view>
+  </view>
+  <view class="rule-card">
+    <view class="rule-title">申请时限</view>
+    <view class="rule-copy">签收或自提后 {{config.applicationWindowHours}} 小时内提交。订单未记录签收时间时，请直接联系客服。</view>
+  </view>
+  <view class="rule-card">
+    <view class="rule-title">需要提供的凭证</view>
+    <view class="rule-copy">{{config.evidenceTip}}</view>
+  </view>
+  <view class="rule-card">
+    <view class="rule-title">可申请的问题</view>
+    <view class="tag-row">
+      <view class="tag" wx:for="{{config.types}}" wx:key="*this">{{item}}</view>
+    </view>
+  </view>
+  <view class="rule-card">
+    <view class="rule-title">处理方式</view>
+    <view class="rule-copy">根据实际情况协商补发、部分退款或其他方案。当前未接微信支付退款，涉及退款时由客服记录拟退款金额并线下处理。</view>
+  </view>
+  <view class="mode-note">{{config.serviceNotice}}</view>
+  <button class="contact-btn" bindtap="contactService">联系客服</button>
+</view>
