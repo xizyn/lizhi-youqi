@@ -66,28 +66,6 @@ Page({
     }
   },
 
-  showVarietyDetail: function (e) {
-    const index = Number(e.currentTarget.dataset.index)
-    const item = this.data.varieties[index]
-
-    if (!item) {
-      return
-    }
-
-    wx.showModal({
-      title: item.name,
-      content: [
-        '口感特点：' + item.taste,
-        '适合人群：' + item.suitableFor,
-        '成熟说明：' + item.matureText,
-        '配送建议：' + item.deliveryAdvice
-      ].join('\n\n'),
-      showCancel: false,
-      confirmText: '知道了',
-      confirmColor: '#4f7d46'
-    })
-  },
-
   previewPhoto: function (e) {
     const current = e.currentTarget.dataset.src
     if (!current) {

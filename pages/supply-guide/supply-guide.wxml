@@ -24,16 +24,17 @@
       hover-stay-time="80"
       wx:for="{{varieties}}"
       wx:key="name"
-      data-index="{{index}}"
-      bindtap="showVarietyDetail"
     >
-      <image
-        class="variety-image"
-        src="{{item.image}}"
-        data-src="{{item.image}}"
-        mode="aspectFill"
-        catchtap="previewVarietyImage"
-      ></image>
+      <view class="variety-image-wrap">
+        <image
+          class="variety-image"
+          src="{{item.image}}"
+          data-src="{{item.image}}"
+          mode="aspectFill"
+          catchtap="previewVarietyImage"
+        ></image>
+        <view class="image-hint">点击查看大图</view>
+      </view>
       <view class="variety-copy">
         <view class="variety-name">{{item.name}}</view>
         <view class="info-row">
@@ -52,11 +53,15 @@
           <view class="info-label">配送建议</view>
           <view class="info-text">{{item.deliveryAdvice}}</view>
         </view>
-        <view class="variety-actions">
-          <button class="light-button" data-index="{{index}}" catchtap="showVarietyDetail">了解这个品种</button>
-          <button class="light-button primary-lite" catchtap="goReminder">开售前提醒我</button>
-        </view>
       </view>
+    </view>
+
+    <view class="variety-reminder-panel">
+      <view class="variety-reminder-copy">
+        <view class="variety-reminder-title">今年为小年，具体开售时间以果园成熟情况为准。</view>
+        <view class="variety-reminder-desc">想第一时间知道开售时间，可以先订阅提醒。</view>
+      </view>
+      <button class="variety-reminder-button" bindtap="goReminder">开售前提醒我</button>
     </view>
   </view>
 
