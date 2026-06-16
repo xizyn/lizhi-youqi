@@ -314,11 +314,23 @@
   box-sizing: border-box;
 }
 
+.section-card-hover {
+  background: #f7fbf0;
+  transform: scale(0.992);
+}
+
 .section-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16rpx;
+}
+
+.section-brief {
+  margin-top: 12rpx;
+  color: #66705f;
+  font-size: 23rpx;
+  line-height: 1.5;
 }
 
 .section-title {
@@ -346,13 +358,20 @@
 }
 
 .supply-item {
+  position: relative;
   display: flex;
   align-items: center;
   min-width: 0;
   padding: 12rpx;
   border-radius: 18rpx;
   background: linear-gradient(90deg, #f4faec 0%, #fffdf8 100%);
+  border: 1rpx solid rgba(83, 121, 63, 0.08);
   box-sizing: border-box;
+}
+
+.supply-item-hover {
+  background: #edf7e8;
+  transform: scale(0.985);
 }
 
 .supply-image {
@@ -382,6 +401,14 @@
   line-height: 1.35;
 }
 
+.supply-link {
+  margin-top: 9rpx;
+  color: #2f7638;
+  font-size: 20rpx;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .supply-tags {
   display: flex;
   align-items: center;
@@ -400,16 +427,45 @@
   text-align: center;
 }
 
-.supply-time {
+.supply-reminder {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
   margin-top: 22rpx;
-  padding: 18rpx 20rpx;
+  padding: 18rpx 18rpx 18rpx 20rpx;
   border-radius: 16rpx;
   background: #f4f0e6;
+}
+
+.supply-reminder-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.supply-reminder-title {
   color: #257137;
-  font-size: 25rpx;
+  font-size: 24rpx;
   font-weight: 800;
   line-height: 1.35;
-  text-align: center;
+}
+
+.supply-reminder-desc {
+  margin-top: 7rpx;
+  color: #65715f;
+  font-size: 21rpx;
+  line-height: 1.4;
+}
+
+.supply-reminder-button {
+  flex: 0 0 auto;
+  padding: 13rpx 18rpx;
+  border: 1rpx solid rgba(58, 126, 55, 0.36);
+  border-radius: 999rpx;
+  background: #fbfff7;
+  color: #2f7638;
+  font-size: 22rpx;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .orchard-photos {
@@ -424,6 +480,25 @@
   height: 158rpx;
   border-radius: 16rpx;
   background: #edf3e5;
+}
+
+.orchard-photo-hover {
+  opacity: 0.86;
+  transform: scale(0.985);
+}
+
+.section-link {
+  flex: 0 0 auto;
+  color: #4f7d46;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.orchard-intro {
+  margin-top: 14rpx;
+  color: #66705f;
+  font-size: 23rpx;
+  line-height: 1.55;
 }
 
 .orchard-note {

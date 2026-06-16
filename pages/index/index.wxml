@@ -62,33 +62,69 @@
     </view>
   </view>
 
-  <view class="section-card supply-card">
+  <view
+    class="section-card supply-card"
+    hover-class="section-card-hover"
+    hover-stay-time="80"
+    bindtap="goSupplyGuide"
+  >
     <view class="section-head">
       <view class="section-title">本季供应预览</view>
-      <view class="section-tag">预计供应</view>
+      <view class="section-tag">了解本季供应</view>
     </view>
+    <view class="section-brief">查看品种特点、预计开售时间和配送建议。</view>
     <view class="supply-products">
-      <view class="supply-item" wx:for="{{supplyItems}}" wx:key="name">
+      <view
+        class="supply-item"
+        hover-class="supply-item-hover"
+        hover-stay-time="80"
+        wx:for="{{supplyItems}}"
+        wx:key="name"
+      >
         <image class="supply-image" src="{{item.image}}" mode="aspectFill"></image>
         <view class="supply-info">
           <view class="supply-name">{{item.name}}</view>
           <view class="supply-desc">{{item.desc}}</view>
+          <view class="supply-link">{{item.actionText}}</view>
         </view>
       </view>
     </view>
     <view class="supply-tags">
       <view class="supply-tag" wx:for="{{supplyTags}}" wx:key="*this">{{item}}</view>
     </view>
-    <view class="supply-time">预计2027年6月底至7月中旬开售</view>
+    <view class="supply-reminder">
+      <view class="supply-reminder-copy">
+        <view class="supply-reminder-title">今年为小年，预计2027年6月底至7月中旬开售</view>
+        <view class="supply-reminder-desc">开售前可订阅提醒，成熟后第一时间通知。</view>
+      </view>
+      <view class="supply-reminder-button" catchtap="goReminder">开售前提醒我</view>
+    </view>
   </view>
 
-  <view class="section-card orchard-card">
+  <view
+    class="section-card orchard-card"
+    hover-class="section-card-hover"
+    hover-stay-time="80"
+    bindtap="goSupplyGuide"
+  >
     <view class="section-head">
       <view class="section-title">自家果园实拍</view>
+      <view class="section-link">查看果园实拍与供应说明 ></view>
     </view>
+    <view class="orchard-intro">以下图片为果园实拍和往年供应参考，实际果况以当季采摘为准。</view>
     <view class="orchard-photos">
-      <image class="orchard-photo" wx:for="{{orchardPhotos}}" wx:key="*this" src="{{item}}" mode="aspectFill"></image>
+      <image
+        class="orchard-photo"
+        hover-class="orchard-photo-hover"
+        hover-stay-time="80"
+        wx:for="{{orchardPhotos}}"
+        wx:key="*this"
+        src="{{item}}"
+        data-src="{{item}}"
+        mode="aspectFill"
+        catchtap="previewOrchardPhoto"
+      ></image>
     </view>
-    <view class="orchard-note">深圳本地自家果园，实际供应以当季采摘为准</view>
+    <view class="orchard-note">点击图片查看大图，支持左右滑动查看全部实拍图。</view>
   </view>
 </view>

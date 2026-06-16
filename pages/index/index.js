@@ -11,8 +11,18 @@ Page({
       { title: '果园参观', desc: '暂未开放', iconPath: '/assets/icons/home-orchard.png', url: '/pages/orchard-visit/orchard-visit', disabled: true }
     ],
     supplyItems: [
-      { name: '桂味荔枝', desc: '清甜带香', image: '/assets/images/products/guiwei-5.jpg' },
-      { name: '糯米糍荔枝', desc: '核小肉厚', image: '/assets/images/products/nuomici-5.jpg' }
+      {
+        name: '桂味荔枝',
+        desc: '清甜带香',
+        image: '/assets/images/products/guiwei-5.jpg',
+        actionText: '查看品种说明 >'
+      },
+      {
+        name: '糯米糍荔枝',
+        desc: '核小肉厚',
+        image: '/assets/images/products/nuomici-5.jpg',
+        actionText: '查看品种说明 >'
+      }
     ],
     supplyTags: ['支持自提', '深圳同城配送', '顺丰快递'],
     orchardPhotos: [
@@ -46,6 +56,25 @@ Page({
       title: '配送说明',
       content: '附近送、顺丰快递和自提均需客服确认。快递运费以顺丰实际费用为准。',
       showCancel: false
+    })
+  },
+
+  goSupplyGuide() {
+    wx.navigateTo({ url: '/pages/supply-guide/supply-guide' })
+  },
+
+  goReminder() {
+    wx.navigateTo({ url: '/pages/reminder/reminder' })
+  },
+
+  previewOrchardPhoto(e) {
+    const current = e.currentTarget.dataset.src
+    if (!current) {
+      return
+    }
+    wx.previewImage({
+      current: current,
+      urls: this.data.orchardPhotos
     })
   }
 })

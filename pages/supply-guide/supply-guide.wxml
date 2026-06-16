@@ -1,0 +1,125 @@
+<view class="guide-page">
+  <view class="hero-card">
+    <image class="hero-image" src="/assets/images/banner-lychee.png" mode="aspectFill"></image>
+    <view class="hero-mask"></view>
+    <view class="hero-copy">
+      <view class="hero-kicker">深圳本地自家果园</view>
+      <view class="hero-title">本季荔枝供应说明</view>
+      <view class="hero-subtitle">{{saleTimeText}}</view>
+      <view class="hero-note">实际供应以当季成熟度和采摘情况为准。</view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-head">
+      <view>
+        <view class="section-title">本季预计供应品种</view>
+        <view class="section-desc">桂味与糯米糍成熟时间和口感不同，以下说明用于开售前了解。</view>
+      </view>
+    </view>
+
+    <view
+      class="variety-card"
+      hover-class="press-card"
+      hover-stay-time="80"
+      wx:for="{{varieties}}"
+      wx:key="name"
+      data-index="{{index}}"
+      bindtap="showVarietyDetail"
+    >
+      <image
+        class="variety-image"
+        src="{{item.image}}"
+        data-src="{{item.image}}"
+        mode="aspectFill"
+        catchtap="previewVarietyImage"
+      ></image>
+      <view class="variety-copy">
+        <view class="variety-name">{{item.name}}</view>
+        <view class="info-row">
+          <view class="info-label">口感特点</view>
+          <view class="info-text">{{item.taste}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">适合人群</view>
+          <view class="info-text">{{item.suitableFor}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">成熟说明</view>
+          <view class="info-text">{{item.matureText}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">配送建议</view>
+          <view class="info-text">{{item.deliveryAdvice}}</view>
+        </view>
+        <view class="variety-actions">
+          <button class="light-button" data-index="{{index}}" catchtap="showVarietyDetail">了解这个品种</button>
+          <button class="light-button primary-lite" catchtap="goReminder">开售前提醒我</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card time-card">
+    <view class="section-title">为什么要等成熟后再开售</view>
+    <view class="time-list">
+      <view class="time-item">今年为小年，供应数量和开售节奏以果园实际情况为准。</view>
+      <view class="time-item">荔枝成熟时间会受天气、雨水和温度影响，具体时间可能调整。</view>
+      <view class="time-item">果园会根据成熟批次安排采摘，不提前采摘未成熟鲜果。</view>
+    </view>
+    <view class="reminder-strip">
+      <view>
+        <view class="reminder-title">开售前可先订阅提醒</view>
+        <view class="reminder-desc">进入采摘期后，我们会优先通知已预约提醒的用户。</view>
+      </view>
+      <button class="reminder-button" bindtap="goReminder">开售前提醒我</button>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">可选择的取果方式</view>
+    <view class="delivery-grid">
+      <view
+        class="delivery-card"
+        hover-class="press-card"
+        hover-stay-time="80"
+        wx:for="{{deliveryItems}}"
+        wx:key="title"
+        data-url="{{item.url}}"
+        bindtap="navigateTo"
+      >
+        <view class="delivery-title">{{item.title}}</view>
+        <view class="delivery-desc">{{item.desc}}</view>
+        <view class="delivery-link">查看说明 ></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-head">
+      <view>
+        <view class="section-title">自家果园实拍</view>
+        <view class="section-desc">以下图片为果园实拍和往年供应参考，实际果况以当季采摘为准。</view>
+      </view>
+    </view>
+    <view class="photo-grid">
+      <image
+        class="photo-item"
+        hover-class="photo-press"
+        hover-stay-time="80"
+        wx:for="{{orchardPhotos}}"
+        wx:key="*this"
+        src="{{item}}"
+        data-src="{{item}}"
+        mode="aspectFill"
+        bindtap="previewPhoto"
+      ></image>
+    </view>
+    <view class="photo-tip">点击图片查看大图，支持左右滑动查看全部图片。</view>
+  </view>
+
+  <view class="bottom-actions">
+    <button class="bottom-primary" bindtap="goReminder">开售前提醒我</button>
+    <button class="bottom-secondary" bindtap="goHome">返回首页</button>
+  </view>
+</view>
