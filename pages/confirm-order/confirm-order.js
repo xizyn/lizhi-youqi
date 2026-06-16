@@ -449,16 +449,20 @@ Page({
       storage.redeemOrderPoints(amounts.pointsUsed, result.record)
     }
     storage.clearOrderDraft()
+    storage.setOrderFilter('pendingPay')
 
-    wx.showToast({
-      title: '订单已提交',
-      icon: 'success',
-      duration: 1200
+    const that = this
+    wx.redirectTo({
+      url: '/pages/order-success/order-success?id=' + encodeURIComponent(result.record.id),
+      fail: function () {
+        that.setData({
+          submitting: false
+        })
+        wx.showToast({
+          title: '订单已提交，请到订单页查看',
+          icon: 'none'
+        })
+      }
     })
-    setTimeout(function () {
-      wx.switchTab({
-        url: '/pages/orders/orders'
-      })
-    }, 500)
   }
 })

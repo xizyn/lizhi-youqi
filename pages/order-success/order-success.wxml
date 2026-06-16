@@ -1,0 +1,43 @@
+<view class="success-page">
+  <view class="success-card">
+    <view class="success-icon">✓</view>
+    <view class="success-title">订单提交成功</view>
+    <view class="success-desc">客服确认库存、采摘和配送安排后会联系付款。</view>
+
+    <view class="summary-panel">
+      <view class="summary-row">
+        <text class="summary-label">订单号</text>
+        <text class="summary-value">{{orderNoText}}</text>
+      </view>
+      <view class="summary-row">
+        <text class="summary-label">订单金额</text>
+        <text class="summary-value amount">{{amountText}}</text>
+      </view>
+      <view class="summary-row">
+        <text class="summary-label">当前状态</text>
+        <text class="status-pill">{{statusText}}</text>
+      </view>
+      <view class="summary-row">
+        <text class="summary-label">商品</text>
+        <text class="summary-value">{{productName}}</text>
+      </view>
+      <view class="summary-row">
+        <text class="summary-label">交付方式</text>
+        <text class="summary-value">{{deliveryText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="notice-card">
+    <view class="notice-title">下一步</view>
+    <view class="notice-copy">订单已进入待付款列表。请保持电话或微信畅通，客服会根据当日成熟度和库存情况确认最终安排。</view>
+  </view>
+
+  <view class="action-card">
+    <button class="primary-action" bindtap="viewOrders">查看我的订单</button>
+    <view class="secondary-actions">
+      <button class="secondary-action" bindtap="contactService">联系客服</button>
+      <button class="secondary-action" bindtap="goHome">返回首页</button>
+    </view>
+  </view>
+</view>

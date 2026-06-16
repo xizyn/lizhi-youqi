@@ -8,6 +8,7 @@
     "pages/after-sale-detail/after-sale-detail",
     "pages/after-sale-rules/after-sale-rules",
     "pages/confirm-order/confirm-order",
+    "pages/order-success/order-success",
     "pages/profile/profile",
     "pages/coupons/coupons",
     "pages/points/points",

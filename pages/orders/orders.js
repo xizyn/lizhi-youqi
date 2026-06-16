@@ -366,7 +366,13 @@ function normalizeOrder(order) {
     showAfterSale: showAfterSale,
     activeAfterSaleId: activeAfterSale ? activeAfterSale.afterSaleId : '',
     afterSaleActionText: activeAfterSale ? '查看售后进度' : '申请售后',
-    actionClass: actionCount >= 4 ? 'action-grid-four' : 'action-grid-three'
+    actionClass: actionCount === 1
+      ? 'action-grid-one'
+      : actionCount === 2
+        ? 'action-grid-two'
+        : actionCount === 3
+          ? 'action-grid-three'
+          : 'action-grid-many'
   })
 }
 
@@ -432,11 +438,6 @@ Page({
       tabBar.setData({ selected: 1 })
     }
     const requestedFilter = storage.consumeOrderFilter()
-    if (requestedFilter) {
-      this.setData({
-        activeFilter: requestedFilter
-      })
-    }
     this.loadOrders(requestedFilter || this.data.activeFilter)
   },
 
