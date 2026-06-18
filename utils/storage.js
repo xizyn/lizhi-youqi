@@ -53,18 +53,22 @@ function isPlainObject(value) {
   return Object.prototype.toString.call(value) === '[object Object]'
 }
 
-function normalizeStockCount(value) {
+function normalizeStockWeight(value) {
   if (value === '' || value === null || typeof value === 'undefined') {
     return ''
   }
-  const numberValue = Number(value)
+  const text = String(value).trim()
+  if (!text) {
+    return ''
+  }
+  const numberValue = Number(text)
   if (!isFinite(numberValue)) {
     return ''
   }
   if (numberValue < 0) {
     return 0
   }
-  return Math.floor(numberValue)
+  return Math.round(numberValue * 10) / 10
 }
 
 function mergeConfig(config) {
@@ -74,12 +78,18 @@ function mergeConfig(config) {
   const rawSkuStatusMap = Object.assign({}, clone(mockData.defaultSkuStatusMap || {}), source.skuStatusMap || {})
   const skuStatusMap = {}
   Object.keys(rawSkuStatusMap).forEach(function (skuId) {
-    const defaultStatus = (mockData.defaultSkuStatusMap || {})[skuId] || {}
     const currentStatus = rawSkuStatusMap[skuId] || {}
-    skuStatusMap[skuId] = Object.assign({}, defaultStatus, currentStatus, {
-      stockCount: normalizeStockCount(currentStatus.stockCount)
-    })
+    skuStatusMap[skuId] = {
+      isListed: currentStatus.isListed !== false,
+      isSoldOut: currentStatus.isSoldOut === true
+    }
   })
+  const defaultVarietyStock = clone((mockData.defaultConfig || {}).varietyStock || { guiweiWeight: '', nuomiciWeight: '' })
+  const sourceVarietyStock = source.varietyStock || {}
+  const varietyStock = {
+    guiweiWeight: normalizeStockWeight(Object.prototype.hasOwnProperty.call(sourceVarietyStock, 'guiweiWeight') ? sourceVarietyStock.guiweiWeight : defaultVarietyStock.guiweiWeight),
+    nuomiciWeight: normalizeStockWeight(Object.prototype.hasOwnProperty.call(sourceVarietyStock, 'nuomiciWeight') ? sourceVarietyStock.nuomiciWeight : defaultVarietyStock.nuomiciWeight)
+  }
   const defaultExpressDelivery = clone(mockData.defaultExpressDeliveryConfig || {})
   const sourceExpressDelivery = source.expressDelivery || {}
   const expressDelivery = Object.assign({}, defaultExpressDelivery, sourceExpressDelivery, {
@@ -147,6 +157,7 @@ function mergeConfig(config) {
     saleReminder: saleReminder,
     afterSale: afterSale,
     pickupTimeSlots: pickupTimeSlots,
+    varietyStock: varietyStock,
     skuStatusMap: skuStatusMap
   })
 }

@@ -1411,26 +1411,31 @@
   justify-content: flex-end;
 }
 
-.sku-stock-control {
-  width: 100%;
+.variety-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.variety-stock-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16rpx;
-  padding: 14rpx 16rpx;
+  padding: 18rpx;
   border: 1rpx solid rgba(47, 125, 66, 0.12);
-  border-radius: 12rpx;
+  border-radius: 14rpx;
   background: #fffaf2;
   box-sizing: border-box;
 }
 
-.sku-stock-label {
+.variety-stock-label {
   color: #4f5b46;
   font-size: 24rpx;
   font-weight: 600;
 }
 
-.sku-stock-input-wrap {
+.variety-stock-input-wrap {
   min-width: 210rpx;
   display: flex;
   align-items: center;
@@ -1442,7 +1447,7 @@
   box-sizing: border-box;
 }
 
-.sku-stock-input {
+.variety-stock-input {
   width: 130rpx;
   min-width: 0;
   height: 44rpx;
@@ -1452,7 +1457,7 @@
   text-align: right;
 }
 
-.sku-stock-unit {
+.variety-stock-unit {
   color: #7a8373;
   font-size: 22rpx;
 }
@@ -1824,16 +1829,16 @@
     padding-left: 100rpx;
   }
 
-  .sku-stock-control {
+  .variety-stock-row {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .sku-stock-input-wrap {
+  .variety-stock-input-wrap {
     width: 100%;
   }
 
-  .sku-stock-input {
+  .variety-stock-input {
     flex: 1;
     width: auto;
   }

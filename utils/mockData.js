@@ -212,8 +212,7 @@ const defaultAfterSaleConfig = {
 const defaultSkuStatusMap = skuOptions.reduce(function (map, sku) {
   map[sku.id] = {
     isListed: true,
-    isSoldOut: false,
-    stockCount: ''
+    isSoldOut: false
   }
   return map
 }, {})
@@ -291,6 +290,10 @@ const defaultConfig = {
   saleReminder: defaultSaleReminderConfig,
   afterSale: defaultAfterSaleConfig,
   prices: defaultPrices,
+  varietyStock: {
+    guiweiWeight: '',
+    nuomiciWeight: ''
+  },
   shippingFees: defaultShippingFees,
   expressDelivery: defaultExpressDeliveryConfig,
   nearbyDelivery: defaultNearbyDeliveryConfig,

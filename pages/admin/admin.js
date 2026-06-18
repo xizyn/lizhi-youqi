@@ -118,6 +118,14 @@ function buildShippingFeeRows(config) {
   })
 }
 
+function buildVarietyStockRows(config) {
+  const varietyStock = config.varietyStock || {}
+  return [
+    { key: 'guiweiWeight', label: '桂味库存重量', value: stockWeightInputValue(varietyStock.guiweiWeight) },
+    { key: 'nuomiciWeight', label: '糯米糍库存重量', value: stockWeightInputValue(varietyStock.nuomiciWeight) }
+  ]
+}
+
 function buildSkuStatusRows(config) {
   const prices = config.prices || {}
   const statusMap = config.skuStatusMap || {}
@@ -131,8 +139,7 @@ function buildSkuStatusRows(config) {
       image: sku.image,
       priceText: !isNaN(price) && price > 0 ? '¥' + formatMoney(price) : '价格待补',
       isListed: status.isListed !== false,
-      isSoldOut: status.isSoldOut === true,
-      stockCount: stockCountInputValue(status.stockCount)
+      isSoldOut: status.isSoldOut === true
     }
   })
 }
@@ -243,8 +250,17 @@ function describeProductConfigChanges(previousConfig, nextConfig) {
     }
     const before = previousStatus[sku.id] || {}
     const after = nextStatus[sku.id] || {}
-    if ((before.isListed !== false) !== (after.isListed !== false) || (before.isSoldOut === true) !== (after.isSoldOut === true) || normalizeSkuStockCount(before.stockCount) !== normalizeSkuStockCount(after.stockCount)) {
+    if ((before.isListed !== false) !== (after.isListed !== false) || (before.isSoldOut === true) !== (after.isSoldOut === true)) {
       statusChanges += 1
+    }
+  })
+
+  const previousStock = previousConfig.varietyStock || {}
+  const nextStock = nextConfig.varietyStock || {}
+  let stockChanges = 0
+  ;['guiweiWeight', 'nuomiciWeight'].forEach(function (key) {
+    if (normalizeStockWeight(previousStock[key]) !== normalizeStockWeight(nextStock[key])) {
+      stockChanges += 1
     }
   })
 
@@ -254,6 +270,9 @@ function describeProductConfigChanges(previousConfig, nextConfig) {
   }
   if (statusChanges) {
     parts.push('更新商品状态 ' + statusChanges + ' 项')
+  }
+  if (stockChanges) {
+    parts.push('更新库存重量 ' + stockChanges + ' 项')
   }
   return parts.length ? parts.join('，') : '保存商品配置'
 }
@@ -269,22 +288,26 @@ function parseBooleanText(value) {
   return value === true || value === 'true'
 }
 
-function normalizeSkuStockCount(value) {
+function normalizeStockWeight(value) {
   if (value === '' || value === null || typeof value === 'undefined') {
     return ''
   }
-  const numberValue = Number(value)
+  const text = String(value).trim()
+  if (!text) {
+    return ''
+  }
+  const numberValue = Number(text)
   if (!isFinite(numberValue)) {
     return ''
   }
   if (numberValue < 0) {
     return 0
   }
-  return Math.floor(numberValue)
+  return Math.round(numberValue * 10) / 10
 }
 
-function stockCountInputValue(value) {
-  const normalizedValue = normalizeSkuStockCount(value)
+function stockWeightInputValue(value) {
+  const normalizedValue = normalizeStockWeight(value)
   return normalizedValue === '' ? '' : String(normalizedValue)
 }
 
@@ -1130,6 +1153,7 @@ Page({
     configForm: {},
     priceRows: [],
     shippingFeeRows: [],
+    varietyStockRows: [],
     skuStatusRows: [],
     productStats: [],
     productIssues: [],
@@ -1306,6 +1330,7 @@ Page({
       }),
       priceRows: buildPriceRows(config),
       shippingFeeRows: buildShippingFeeRows(config),
+      varietyStockRows: buildVarietyStockRows(config),
       skuStatusRows: buildSkuStatusRows(config),
       productStats: productWorkbench.stats,
       productIssues: productWorkbench.issues,
@@ -1739,10 +1764,10 @@ Page({
     })
   },
 
-  handleSkuStockInput: function (e) {
+  handleVarietyStockInput: function (e) {
     const index = Number(e.currentTarget.dataset.index)
     this.setData({
-      ['skuStatusRows[' + index + '].stockCount']: e.detail.value
+      ['varietyStockRows[' + index + '].value']: e.detail.value
     })
   },
 
@@ -1859,6 +1884,7 @@ Page({
     const config = clone(this.data.configForm)
     const prices = {}
     const shippingFees = {}
+    const varietyStock = {}
     const skuStatusMap = {}
     this.data.priceRows.forEach(function (item) {
       prices[item.key] = Number(item.value) || 0
@@ -1866,15 +1892,18 @@ Page({
     this.data.shippingFeeRows.forEach(function (item) {
       shippingFees[item.key] = Number(item.value) || 0
     })
+    this.data.varietyStockRows.forEach(function (item) {
+      varietyStock[item.key] = normalizeStockWeight(item.value)
+    })
     this.data.skuStatusRows.forEach(function (item) {
       skuStatusMap[item.id] = {
         isListed: item.isListed !== false,
-        isSoldOut: item.isSoldOut === true,
-        stockCount: normalizeSkuStockCount(item.stockCount)
+        isSoldOut: item.isSoldOut === true
       }
     })
     config.prices = prices
     config.shippingFees = shippingFees
+    config.varietyStock = varietyStock
     config.skuStatusMap = skuStatusMap
     config.pickupTimeSlots = this.data.pickupTimeSlotRows.map(function (item) {
       return String(item.value || '').trim()

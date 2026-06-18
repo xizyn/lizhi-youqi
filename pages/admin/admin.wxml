@@ -691,11 +691,29 @@
       </view>
     </view>
 
+    <view class="product-section" id="product-variety-stock-panel">
+      <view class="product-section-head">
+        <view>
+          <view class="product-section-title">品种库存重量</view>
+          <view class="product-section-desc">按实际可售鲜果重量记录，5斤装、10斤装和混装都从对应品种库存中安排。</view>
+        </view>
+      </view>
+      <view class="variety-stock-list">
+        <view class="variety-stock-row" wx:for="{{varietyStockRows}}" wx:key="key">
+          <text class="variety-stock-label">{{item.label}}</text>
+          <view class="variety-stock-input-wrap">
+            <input class="variety-stock-input" type="digit" value="{{item.value}}" data-index="{{index}}" bindinput="handleVarietyStockInput" placeholder="未设置" />
+            <text class="variety-stock-unit">斤</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <view class="product-section" id="product-status-panel">
       <view class="product-section-head">
         <view>
           <view class="product-section-title">库存与销售状态</view>
-          <view class="product-section-desc">填写每个 SKU 的当前可售箱数；未设置时不限制展示，售罄状态仍以开关为准。</view>
+          <view class="product-section-desc">上架 / 售罄开关用于控制各 SKU 的展示和销售状态。</view>
         </view>
       </view>
       <view class="sku-status-list">
@@ -713,13 +731,6 @@
             <view class="switch-line">
               <text>售罄</text>
               <switch checked="{{item.isSoldOut}}" data-index="{{index}}" data-field="isSoldOut" bindchange="handleSkuStatusSwitch" />
-            </view>
-          </view>
-          <view class="sku-stock-control">
-            <text class="sku-stock-label">库存数量</text>
-            <view class="sku-stock-input-wrap">
-              <input class="sku-stock-input" type="number" value="{{item.stockCount}}" data-index="{{index}}" bindinput="handleSkuStockInput" placeholder="未设置" />
-              <text class="sku-stock-unit">箱</text>
             </view>
           </view>
         </view>
