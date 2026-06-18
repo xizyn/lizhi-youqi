@@ -212,7 +212,8 @@ const defaultAfterSaleConfig = {
 const defaultSkuStatusMap = skuOptions.reduce(function (map, sku) {
   map[sku.id] = {
     isListed: true,
-    isSoldOut: false
+    isSoldOut: false,
+    stockCount: ''
   }
   return map
 }, {})

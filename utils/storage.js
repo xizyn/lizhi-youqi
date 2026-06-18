@@ -53,11 +53,33 @@ function isPlainObject(value) {
   return Object.prototype.toString.call(value) === '[object Object]'
 }
 
+function normalizeStockCount(value) {
+  if (value === '' || value === null || typeof value === 'undefined') {
+    return ''
+  }
+  const numberValue = Number(value)
+  if (!isFinite(numberValue)) {
+    return ''
+  }
+  if (numberValue < 0) {
+    return 0
+  }
+  return Math.floor(numberValue)
+}
+
 function mergeConfig(config) {
   const source = config || {}
   const prices = Object.assign({}, clone(mockData.defaultPrices), source.prices || {})
   const pickupTimeSlots = Array.isArray(source.pickupTimeSlots) && source.pickupTimeSlots.length ? source.pickupTimeSlots : clone(mockData.defaultConfig.pickupTimeSlots)
-  const skuStatusMap = Object.assign({}, clone(mockData.defaultSkuStatusMap || {}), source.skuStatusMap || {})
+  const rawSkuStatusMap = Object.assign({}, clone(mockData.defaultSkuStatusMap || {}), source.skuStatusMap || {})
+  const skuStatusMap = {}
+  Object.keys(rawSkuStatusMap).forEach(function (skuId) {
+    const defaultStatus = (mockData.defaultSkuStatusMap || {})[skuId] || {}
+    const currentStatus = rawSkuStatusMap[skuId] || {}
+    skuStatusMap[skuId] = Object.assign({}, defaultStatus, currentStatus, {
+      stockCount: normalizeStockCount(currentStatus.stockCount)
+    })
+  })
   const defaultExpressDelivery = clone(mockData.defaultExpressDeliveryConfig || {})
   const sourceExpressDelivery = source.expressDelivery || {}
   const expressDelivery = Object.assign({}, defaultExpressDelivery, sourceExpressDelivery, {

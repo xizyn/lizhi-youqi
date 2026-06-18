@@ -695,7 +695,7 @@
       <view class="product-section-head">
         <view>
           <view class="product-section-title">库存与销售状态</view>
-          <view class="product-section-desc">当前未接入库存台账，以售罄开关作为补货提醒</view>
+          <view class="product-section-desc">填写每个 SKU 的当前可售箱数；未设置时不限制展示，售罄状态仍以开关为准。</view>
         </view>
       </view>
       <view class="sku-status-list">
@@ -713,6 +713,13 @@
             <view class="switch-line">
               <text>售罄</text>
               <switch checked="{{item.isSoldOut}}" data-index="{{index}}" data-field="isSoldOut" bindchange="handleSkuStatusSwitch" />
+            </view>
+          </view>
+          <view class="sku-stock-control">
+            <text class="sku-stock-label">库存数量</text>
+            <view class="sku-stock-input-wrap">
+              <input class="sku-stock-input" type="number" value="{{item.stockCount}}" data-index="{{index}}" bindinput="handleSkuStockInput" placeholder="未设置" />
+              <text class="sku-stock-unit">箱</text>
             </view>
           </view>
         </view>

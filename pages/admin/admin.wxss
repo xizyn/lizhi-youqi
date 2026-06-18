@@ -1384,11 +1384,12 @@
 
 .sku-status-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 18rpx;
   padding: 18rpx;
   border-radius: 14rpx;
   background: #f7f2e8;
+  flex-wrap: wrap;
 }
 
 .sku-status-image {
@@ -1408,6 +1409,52 @@
   gap: 14rpx;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.sku-stock-control {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  padding: 14rpx 16rpx;
+  border: 1rpx solid rgba(47, 125, 66, 0.12);
+  border-radius: 12rpx;
+  background: #fffaf2;
+  box-sizing: border-box;
+}
+
+.sku-stock-label {
+  color: #4f5b46;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.sku-stock-input-wrap {
+  min-width: 210rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 12rpx;
+  border: 1rpx solid rgba(47, 125, 66, 0.18);
+  border-radius: 10rpx;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.sku-stock-input {
+  width: 130rpx;
+  min-width: 0;
+  height: 44rpx;
+  line-height: 44rpx;
+  color: #244b2c;
+  font-size: 24rpx;
+  text-align: right;
+}
+
+.sku-stock-unit {
+  color: #7a8373;
+  font-size: 22rpx;
 }
 
 .switch-line {
@@ -1775,5 +1822,19 @@
     width: 100%;
     justify-content: space-between;
     padding-left: 100rpx;
+  }
+
+  .sku-stock-control {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sku-stock-input-wrap {
+    width: 100%;
+  }
+
+  .sku-stock-input {
+    flex: 1;
+    width: auto;
   }
 }

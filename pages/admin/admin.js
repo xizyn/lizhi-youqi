@@ -131,7 +131,8 @@ function buildSkuStatusRows(config) {
       image: sku.image,
       priceText: !isNaN(price) && price > 0 ? '¥' + formatMoney(price) : '价格待补',
       isListed: status.isListed !== false,
-      isSoldOut: status.isSoldOut === true
+      isSoldOut: status.isSoldOut === true,
+      stockCount: stockCountInputValue(status.stockCount)
     }
   })
 }
@@ -242,7 +243,7 @@ function describeProductConfigChanges(previousConfig, nextConfig) {
     }
     const before = previousStatus[sku.id] || {}
     const after = nextStatus[sku.id] || {}
-    if ((before.isListed !== false) !== (after.isListed !== false) || (before.isSoldOut === true) !== (after.isSoldOut === true)) {
+    if ((before.isListed !== false) !== (after.isListed !== false) || (before.isSoldOut === true) !== (after.isSoldOut === true) || normalizeSkuStockCount(before.stockCount) !== normalizeSkuStockCount(after.stockCount)) {
       statusChanges += 1
     }
   })
@@ -266,6 +267,25 @@ function buildPickupTimeSlotRows(config) {
 
 function parseBooleanText(value) {
   return value === true || value === 'true'
+}
+
+function normalizeSkuStockCount(value) {
+  if (value === '' || value === null || typeof value === 'undefined') {
+    return ''
+  }
+  const numberValue = Number(value)
+  if (!isFinite(numberValue)) {
+    return ''
+  }
+  if (numberValue < 0) {
+    return 0
+  }
+  return Math.floor(numberValue)
+}
+
+function stockCountInputValue(value) {
+  const normalizedValue = normalizeSkuStockCount(value)
+  return normalizedValue === '' ? '' : String(normalizedValue)
 }
 
 function toMoney(value) {
@@ -1719,6 +1739,13 @@ Page({
     })
   },
 
+  handleSkuStockInput: function (e) {
+    const index = Number(e.currentTarget.dataset.index)
+    this.setData({
+      ['skuStatusRows[' + index + '].stockCount']: e.detail.value
+    })
+  },
+
   refreshProductWorkbench: function () {
     this.loadData()
     wx.showToast({
@@ -1842,7 +1869,8 @@ Page({
     this.data.skuStatusRows.forEach(function (item) {
       skuStatusMap[item.id] = {
         isListed: item.isListed !== false,
-        isSoldOut: item.isSoldOut === true
+        isSoldOut: item.isSoldOut === true,
+        stockCount: normalizeSkuStockCount(item.stockCount)
       }
     })
     config.prices = prices
