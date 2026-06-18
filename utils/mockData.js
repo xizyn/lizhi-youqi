@@ -274,7 +274,7 @@ const orchardLocation = {
 
 const defaultConfig = {
   salesStatus: 'presale',
-  isAdminMock: false,
+  isAdminMock: true,
   adminAuthMode: 'mock',
   mockOpenid: 'mock-user-openid',
   adminOpenidWhitelist: ['mock-admin-openid'],
