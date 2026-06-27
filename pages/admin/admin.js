@@ -1,6 +1,7 @@
 const mockData = require('../../utils/mockData')
 const storage = require('../../utils/storage')
 const reportGenerator = require('../../utils/reportGenerator')
+const stock = require('../../utils/stock')
 
 function indexOfValue(list, value) {
   const index = list.indexOf(value)
@@ -123,6 +124,30 @@ function buildVarietyStockRows(config) {
   return [
     { key: 'guiweiWeight', label: '桂味库存重量', value: stockWeightInputValue(varietyStock.guiweiWeight) },
     { key: 'nuomiciWeight', label: '糯米糍库存重量', value: stockWeightInputValue(varietyStock.nuomiciWeight) }
+  ]
+}
+
+function buildVarietyStockSummaryRows(config, orders) {
+  const usage = stock.calculateStockUsage(config, orders)
+  return [
+    {
+      key: 'guiwei',
+      name: '桂味',
+      stockText: usage.guiwei.stockText,
+      usedText: usage.guiwei.usedText,
+      remainingText: usage.guiwei.remainingText,
+      statusText: usage.guiwei.autoSoldOut ? '已自动停售' : (usage.guiwei.stockSet ? '按库存限制' : '未限制库存'),
+      statusClass: usage.guiwei.autoSoldOut ? 'danger' : (usage.guiwei.stockSet ? 'normal' : 'muted')
+    },
+    {
+      key: 'nuomici',
+      name: '糯米糍',
+      stockText: usage.nuomici.stockText,
+      usedText: usage.nuomici.usedText,
+      remainingText: usage.nuomici.remainingText,
+      statusText: usage.nuomici.autoSoldOut ? '已自动停售' : (usage.nuomici.stockSet ? '按库存限制' : '未限制库存'),
+      statusClass: usage.nuomici.autoSoldOut ? 'danger' : (usage.nuomici.stockSet ? 'normal' : 'muted')
+    }
   ]
 }
 
@@ -1154,6 +1179,7 @@ Page({
     priceRows: [],
     shippingFeeRows: [],
     varietyStockRows: [],
+    varietyStockSummaryRows: [],
     skuStatusRows: [],
     productStats: [],
     productIssues: [],
@@ -1331,6 +1357,7 @@ Page({
       priceRows: buildPriceRows(config),
       shippingFeeRows: buildShippingFeeRows(config),
       varietyStockRows: buildVarietyStockRows(config),
+      varietyStockSummaryRows: buildVarietyStockSummaryRows(config, rawOrders),
       skuStatusRows: buildSkuStatusRows(config),
       productStats: productWorkbench.stats,
       productIssues: productWorkbench.issues,

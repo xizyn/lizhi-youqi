@@ -1,5 +1,6 @@
 const mockData = require('../../utils/mockData')
 const storage = require('../../utils/storage')
+const stock = require('../../utils/stock')
 
 const expressSkuOrder = ['guiwei-5', 'guiwei-10', 'nuomici-5', 'nuomici-10', 'mixed-5', 'mixed-10']
 
@@ -11,6 +12,7 @@ function formatMoney(value) {
 function buildExpressProducts(config, selectedSkuId) {
   const skuStatusMap = config.skuStatusMap || {}
   const deliveryConfig = storage.getExpressDeliveryConfig(config)
+  const orders = storage.getOrders()
 
   return expressSkuOrder.map(function (skuId) {
     return mockData.skuOptions.find(function (item) {
@@ -21,18 +23,22 @@ function buildExpressProducts(config, selectedSkuId) {
   }).map(function (item) {
     const status = skuStatusMap[item.id] || {}
     const price = Number((config.prices || {})[item.priceKey]) || Number(item.expressPrice) || 0
-    const disabled = status.isListed === false || status.isSoldOut === true
+    const stockState = stock.getSkuStockState(config, orders, item, 1)
+    const manuallyDisabled = status.isListed === false || status.isSoldOut === true
+    const disabled = manuallyDisabled || stockState.disabled
     const selected = item.id === selectedSkuId
     const shippingRange = storage.getReferenceShippingRange(config, item.spec, [])
+    const statusText = status.isListed === false ? '已下架' : (status.isSoldOut === true ? '已售罄' : (stockState.disabled ? '库存不足' : ''))
 
     return Object.assign({}, item, {
       price: price,
       priceText: '¥' + formatMoney(price),
       disabled: disabled,
-      statusText: status.isListed === false ? '已下架' : (status.isSoldOut === true ? '已售罄' : ''),
+      statusText: statusText,
+      maxQuantity: stockState.maxQuantity,
       selected: selected,
       selectedClass: selected ? 'selected' : '',
-      selectText: disabled ? '不可选' : (selected ? '已选' : '选择'),
+      selectText: disabled ? (stockState.disabled ? '库存不足' : '不可选') : (selected ? '已选' : '选择'),
       referenceShippingText: shippingRange.text,
       referenceShippingNote: '实际以发货前确认或顺丰结算为准',
       mixNotice: item.variety === '混装' ? deliveryConfig.mixNotice : ''
@@ -97,6 +103,18 @@ Page({
         title: '请先选择商品',
         icon: 'none'
       })
+      return
+    }
+    const sku = mockData.skuOptions.find(function (item) {
+      return item.id === this.data.selectedSkuId
+    }, this)
+    const stockState = stock.getSkuStockState(storage.getConfig(), storage.getOrders(), sku, 1)
+    if (stockState.disabled) {
+      wx.showToast({
+        title: stock.STOCK_ERROR_MESSAGE,
+        icon: 'none'
+      })
+      this.onShow()
       return
     }
 

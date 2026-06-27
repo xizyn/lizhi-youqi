@@ -707,6 +707,15 @@
           </view>
         </view>
       </view>
+      <view class="variety-stock-summary">
+        <view class="variety-stock-summary-card" wx:for="{{varietyStockSummaryRows}}" wx:key="key">
+          <view class="variety-stock-summary-head">
+            <text class="variety-stock-summary-name">{{item.name}}</text>
+            <text class="variety-stock-summary-status {{item.statusClass}}">{{item.statusText}}</text>
+          </view>
+          <view class="variety-stock-summary-line">库存 {{item.stockText}} / 已占用 {{item.usedText}} / 剩余 {{item.remainingText}}</view>
+        </view>
+      </view>
     </view>
 
     <view class="product-section" id="product-status-panel">

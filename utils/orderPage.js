@@ -1,5 +1,6 @@
 const mockData = require('./mockData')
 const storage = require('./storage')
+const stock = require('./stock')
 
 function getIndex(list, value) {
   const index = list.indexOf(value)
@@ -70,17 +71,23 @@ function getSkuProductPrice(config, sku, useExpressPrice) {
   return storage.getProductPrice(config, sku.variety, sku.spec)
 }
 
-function buildSkuOptions(selectedSkuId, supportsGiftBox) {
+function buildSkuOptions(selectedSkuId, supportsGiftBox, quantity) {
   const config = storage.getConfig()
   const skuStatusMap = config.skuStatusMap || {}
+  const orders = storage.getOrders()
+  const selectedQuantity = normalizeQuantity(quantity) || 1
   return mockData.skuOptions.map(function (item) {
     const courierRule = getCourierWeightRule(item.spec)
     const status = skuStatusMap[item.id] || {}
-    const disabled = status.isListed === false || status.isSoldOut === true
+    const stockState = stock.getSkuStockState(config, orders, item, selectedQuantity)
+    const manuallyDisabled = status.isListed === false || status.isSoldOut === true
+    const disabled = manuallyDisabled || stockState.disabled
+    const statusText = status.isListed === false ? '已下架' : (status.isSoldOut === true ? '已售罄' : (stockState.disabled ? '库存不足' : ''))
     return Object.assign({}, item, {
       activeClass: item.id === selectedSkuId ? 'active' : '',
       disabled: disabled,
-      statusText: status.isListed === false ? '已下架' : (status.isSoldOut === true ? '已售罄' : ''),
+      statusText: statusText,
+      maxQuantity: stockState.maxQuantity,
       weightText: item.spec,
       specText: getSkuSpecText(item),
       giftBoxText: getSkuGiftText(item.spec),
@@ -160,7 +167,7 @@ function createOrderPage(options) {
       form: initialForm,
       varietyOptions: mockData.varietyOptions,
       specOptions: mockData.specOptions,
-      skuOptions: buildSkuOptions(initialSku.id, supportsGiftBox),
+      skuOptions: buildSkuOptions(initialSku.id, supportsGiftBox, initialForm.quantity),
       yesNoOptions: mockData.yesNoOptions,
       pickupTimeSlots: pickupTimeSlots,
       nearbyAreaOptions: mockData.nearbyAreaOptions,
@@ -249,7 +256,8 @@ function createOrderPage(options) {
         statusBannerClass: submitBlocked ? 'danger' : '',
         pickupAddressText: config.pickupAddress || '',
         pickupTimeText: config.pickupTime || '',
-        pickupMapImage: config.pickupMapImage || '/assets/images/pickup-map.png'
+        pickupMapImage: config.pickupMapImage || '/assets/images/pickup-map.png',
+        skuOptions: buildSkuOptions(this.data.form.skuId, this.data.supportsGiftBox, this.data.form.quantity)
       })
       this.updateAmounts()
     },
@@ -303,6 +311,9 @@ function createOrderPage(options) {
         ['form.' + field]: value
       })
       if (field === 'quantity') {
+        this.setData({
+          skuOptions: buildSkuOptions(this.data.form.skuId, this.data.supportsGiftBox, value)
+        })
         this.updateAmounts()
       }
       if (customWeightOrder && (field === 'guiweiWeight' || field === 'nuomiciWeight' || field === 'giftBox5Count' || field === 'giftBox10Count')) {
@@ -312,10 +323,19 @@ function createOrderPage(options) {
 
     setSelectedSku: function (skuId) {
       const sku = getSkuById(skuId)
-      const status = (storage.getConfig().skuStatusMap || {})[sku.id] || {}
+      const config = storage.getConfig()
+      const status = (config.skuStatusMap || {})[sku.id] || {}
       if (status.isListed === false || status.isSoldOut === true) {
         wx.showToast({
           title: status.isListed === false ? '商品已下架' : '商品已售罄',
+          icon: 'none'
+        })
+        return
+      }
+      const stockState = stock.getSkuStockState(config, storage.getOrders(), sku, this.data.form.quantity)
+      if (stockState.disabled) {
+        wx.showToast({
+          title: stock.STOCK_ERROR_MESSAGE,
           icon: 'none'
         })
         return
@@ -325,7 +345,7 @@ function createOrderPage(options) {
         'form.skuName': sku.name,
         'form.variety': sku.variety,
         'form.spec': sku.spec,
-        skuOptions: buildSkuOptions(sku.id, this.data.supportsGiftBox),
+        skuOptions: buildSkuOptions(sku.id, this.data.supportsGiftBox, this.data.form.quantity),
         selectedSkuName: sku.name,
         selectedSkuImage: sku.image,
         selectedSkuSpecText: getSkuSpecText(sku),
@@ -561,6 +581,7 @@ function createOrderPage(options) {
         'form.skuName': sku.name,
         'form.variety': sku.variety,
         'form.spec': sku.spec,
+        skuOptions: buildSkuOptions(sku.id, this.data.supportsGiftBox, quantity),
         productPrice: productPrice,
         productPriceText: productPrice > 0 ? productPrice + '元/箱' : '后台确认',
         giftBoxUnitFee: giftBoxUnitFee,
@@ -614,6 +635,22 @@ function createOrderPage(options) {
         if (!this.data.supportsGiftBox && form.needGiftBox === '是') {
           return '快递订单不支持礼盒包装'
         }
+      }
+
+      const stockOrder = customWeightOrder ? {
+        customWeightOrder: true,
+        productName: guiweiWeight && nuomiciWeight ? '混装' : (guiweiWeight ? '桂味' : '糯米糍'),
+        guiweiWeight: guiweiWeight,
+        nuomiciWeight: nuomiciWeight,
+        totalWeight: Math.round((guiweiWeight + nuomiciWeight) * 10) / 10,
+        quantity: 1
+      } : Object.assign({}, getSkuById(form.skuId), {
+        skuId: form.skuId,
+        quantity: quantity
+      })
+      const stockCheck = stock.validateOrderStock(this.data.config || storage.getConfig(), storage.getOrders(), stockOrder)
+      if (!stockCheck.ok) {
+        return stockCheck.message
       }
 
       if (requiresRecipient) {
@@ -808,6 +845,15 @@ function createOrderPage(options) {
         }
       }
 
+      const stockCheck = stock.validateOrderStock(storage.getConfig(), storage.getOrders(), orderPayload)
+      if (!stockCheck.ok) {
+        wx.showToast({
+          title: stockCheck.message,
+          icon: 'none'
+        })
+        return
+      }
+
       storage.saveOrderDraft(orderPayload)
       wx.navigateTo({
         url: '/pages/confirm-order/confirm-order',
@@ -832,7 +878,7 @@ function createOrderPage(options) {
       const form = this.data.form
       const sku = getSkuById(form.skuId)
       this.setData({
-        skuOptions: buildSkuOptions(sku.id, this.data.supportsGiftBox),
+        skuOptions: buildSkuOptions(sku.id, this.data.supportsGiftBox, form.quantity),
         selectedSkuName: sku.name,
         selectedSkuImage: sku.image,
         selectedSkuSpecText: getSkuSpecText(sku),

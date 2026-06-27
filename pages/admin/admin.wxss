@@ -1462,6 +1462,63 @@
   font-size: 22rpx;
 }
 
+.variety-stock-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14rpx;
+  margin-top: 16rpx;
+}
+
+.variety-stock-summary-card {
+  min-width: 0;
+  padding: 18rpx;
+  border: 1rpx solid rgba(47, 125, 66, 0.12);
+  border-radius: 14rpx;
+  background: #f6fbf1;
+  box-sizing: border-box;
+}
+
+.variety-stock-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10rpx;
+}
+
+.variety-stock-summary-name {
+  min-width: 0;
+  color: #25331e;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+.variety-stock-summary-status {
+  flex: 0 0 auto;
+  padding: 5rpx 12rpx;
+  border-radius: 999rpx;
+  color: #2f7d42;
+  background: #e7f4df;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.variety-stock-summary-status.danger {
+  color: #b84a2f;
+  background: #fff0e8;
+}
+
+.variety-stock-summary-status.muted {
+  color: #747c6d;
+  background: #f0eee7;
+}
+
+.variety-stock-summary-line {
+  margin-top: 12rpx;
+  color: #5f6a57;
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+
 .switch-line {
   display: flex;
   align-items: center;
