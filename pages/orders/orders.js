@@ -1,6 +1,7 @@
 const storage = require('../../utils/storage')
 const mockData = require('../../utils/mockData')
 const afterSaleService = require('../../utils/afterSaleService')
+const orderPagination = require('../../utils/orderPagination')
 
 const STATUS_ALIASES = {
   pending_payment: 'pending_payment',
@@ -427,9 +428,14 @@ Page({
   data: {
     orders: [],
     allOrders: [],
+    filteredOrders: [],
     activeFilter: 'all',
     statusTabs: [],
-    statusNotice: FILTER_NOTICES.all
+    statusNotice: FILTER_NOTICES.all,
+    orderPageSize: 10,
+    orderDisplayCount: 10,
+    orderLoadingMore: false,
+    orderHasMore: false
   },
 
   onShow: function () {
@@ -442,11 +448,18 @@ Page({
   },
 
   loadOrders: function (filterOverride) {
-    const allOrders = storage.getOrders().map(normalizeOrder)
+    const allOrders = orderPagination.sortOrdersByTimeDesc(storage.getOrders().map(normalizeOrder))
     const activeFilter = filterOverride || this.data.activeFilter || 'all'
+    const filteredOrders = filterOrders(allOrders, activeFilter)
+    const displayCount = orderPagination.getResetDisplayCount(this.data.orderPageSize)
+    const paged = orderPagination.buildPagedOrders(filteredOrders, displayCount, this.data.orderPageSize)
     this.setData({
       allOrders: allOrders,
-      orders: filterOrders(allOrders, activeFilter),
+      filteredOrders: filteredOrders,
+      orders: paged.orders,
+      orderDisplayCount: paged.orderDisplayCount,
+      orderHasMore: paged.orderHasMore,
+      orderLoadingMore: false,
       statusTabs: buildStatusTabs(allOrders, activeFilter),
       statusNotice: FILTER_NOTICES[activeFilter] || FILTER_NOTICES.all
     })
@@ -458,6 +471,30 @@ Page({
       activeFilter: activeFilter
     })
     this.loadOrders(activeFilter)
+  },
+
+  onReachBottom: function () {
+    this.loadMoreOrders()
+  },
+
+  loadMoreOrders: function () {
+    if (this.data.orderLoadingMore || !this.data.orderHasMore) {
+      return
+    }
+    const that = this
+    this.setData({
+      orderLoadingMore: true
+    })
+    setTimeout(function () {
+      const nextDisplayCount = that.data.orderDisplayCount + that.data.orderPageSize
+      const paged = orderPagination.buildPagedOrders(that.data.filteredOrders, nextDisplayCount, that.data.orderPageSize)
+      that.setData({
+        orders: paged.orders,
+        orderDisplayCount: paged.orderDisplayCount,
+        orderHasMore: paged.orderHasMore,
+        orderLoadingMore: false
+      })
+    }, 300)
   },
 
   copyText: function (e) {

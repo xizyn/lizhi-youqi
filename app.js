@@ -2,6 +2,11 @@ const storage = require('./utils/storage')
 
 App({
   onLaunch() {
+    if (wx.cloud && typeof wx.cloud.init === 'function') {
+      wx.cloud.init({
+        traceUser: true
+      })
+    }
     storage.initMockData()
   },
 

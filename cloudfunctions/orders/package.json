@@ -1,0 +1,9 @@
+{
+  "name": "orders",
+  "version": "1.0.0",
+  "description": "荔枝有期云端订单接口骨架",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}
